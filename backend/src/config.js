@@ -3,7 +3,8 @@ export const config = {
   clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
   gemini: {
     apiKey: process.env.GEMINI_API_KEY || '',
-    model: process.env.GEMMA_HOSTED_MODEL || 'gemma-3-27b-it',
+    model: process.env.GEMMA_HOSTED_MODEL || 'gemma-4-26b-a4b-it',
+    fallbackModel: process.env.GEMMA_HOSTED_FALLBACK_MODEL || 'gemma-4-31b-it',
   },
   ollama: {
     url: process.env.OLLAMA_URL || 'http://localhost:11434',

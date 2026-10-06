@@ -4,19 +4,23 @@
 
 Built for the Hacktoberfest × MLH Gemma hackathon. Problem statement #14: AI Travel Planner.
 
-> 🚧 Work in progress. See [docs/PRODUCT.md](docs/PRODUCT.md) for the product plan.
+> 🚧 Work in progress.
+>
+> - [Product plan](docs/PRODUCT.md)
+> - [Technical architecture](docs/ARCHITECTURE.md)
+> - [AI / Gemma layer design](docs/AI_DESIGN.md)
 
 ## Run locally
 
 ```bash
 # API
-cd server
+cd backend
 cp .env.example .env   # add GEMINI_API_KEY
 npm install
 npm run dev            # http://localhost:5000
 
 # Web
-cd client
+cd frontend
 npm install
 npm run dev            # http://localhost:5173
 ```
