@@ -33,12 +33,22 @@ function WeatherChip({ weather }) {
   );
 }
 
+const NO_PHOTO = new Set(['transport', 'rest']);
+
+function useActivityPhoto(a) {
+  const known = a.placeName || a.baselineName || '';
+  const name = NO_PHOTO.has(a.category) ? '' : known || a.title;
+  return usePlacePhoto(name, { skipCurated: false, strict: !known });
+}
+
 function ActivityItem({ activity, mark, destination, index }) {
   const cat = CATEGORY[activity.category] || CATEGORY.sightseeing;
+  const photo = useActivityPhoto(activity);
   return (
     <li
       className={cn(
-        'relative grid grid-cols-[3.25rem_1fr] gap-3 rounded-2xl p-3 transition-colors',
+        'relative grid gap-3 rounded-2xl p-3 transition-colors',
+        photo ? 'grid-cols-[3.25rem_1fr] sm:grid-cols-[3.25rem_1fr_7.5rem]' : 'grid-cols-[3.25rem_1fr]',
         mark === 'added' && 'animate-remix-in bg-green-50 ring-2 ring-ok/40',
         mark === 'modified' && 'animate-remix-in bg-sunset-100/60 ring-2 ring-sunset-500/40'
       )}
@@ -87,6 +97,14 @@ function ActivityItem({ activity, mark, destination, index }) {
           )}
         </div>
       </div>
+      {photo && (
+        <Photo
+          photo={photo}
+          showCredit={false}
+          className="col-span-2 col-start-2 h-36 rounded-xl sm:col-span-1 sm:col-start-3 sm:h-24"
+          imgClassName="animate-remix-in"
+        />
+      )}
     </li>
   );
 }
@@ -97,10 +115,10 @@ export function DayCard({ day, date, weather, marks, destination, theme }) {
   const landmark = day.type !== 'travel' && day.activities.find((a) => a.placeName || a.baselineName);
   const landmarkName = landmark ? landmark.placeName || landmark.baselineName : '';
   const landmarkPhoto = usePlacePhoto(landmarkName);
-  const bannerPhoto = landmarkPhoto || theme?.photo;
+  const bannerPhoto = landmarkPhoto || (theme?.themed || day.type === 'travel' ? theme?.photo : null);
   return (
     <Card as="section" className={cn('overflow-hidden', changed && 'animate-remix-glow ring-2 ring-sunset-500/30')} aria-labelledby={`day-${day.day}`}>
-      {theme && (
+      {theme && bannerPhoto && (
         <Photo key={bannerPhoto?.src || 'none'} photo={bannerPhoto} className="h-32 sm:h-40" imgClassName="transition-transform duration-700 hover:scale-105">
           <div className="absolute inset-0 bg-linear-to-t from-black/45 via-transparent to-transparent" aria-hidden="true" />
           <span className="absolute left-4 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-ink shadow-sm sm:left-6">

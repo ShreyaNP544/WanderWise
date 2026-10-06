@@ -47,10 +47,14 @@ async function commonsQuality(place) {
  * A credited, landscape photo for any Indian destination. Keyless (Wikipedia + Wikimedia Commons),
  * cached, and optional: returns null when nothing suitable exists, and the UI falls back gracefully.
  */
-export async function placePhoto(text) {
+export async function placePhoto(text, { strict = false } = {}) {
   if (!text) return null;
   const place = text.split(',')[0].trim();
-  const found = (await wikipediaLead(text.trim())) || (place !== text.trim() && (await wikipediaLead(place))) || (await commonsQuality(place));
+  // strict: only an exact Wikipedia article match (used for free-text activity names, where a fuzzy
+  // Commons search could return a photo of the wrong thing).
+  const found = strict
+    ? await wikipediaLead(text.trim())
+    : (await wikipediaLead(text.trim())) || (place !== text.trim() && (await wikipediaLead(place))) || (await commonsQuality(place));
   if (!found) return null;
   return {
     src: found.src,

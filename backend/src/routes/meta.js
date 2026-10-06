@@ -11,7 +11,7 @@ export const metaRouter = Router();
 metaRouter.get('/photo', async (req, res) => {
   const place = z.string().trim().min(2).max(80).parse(req.query.place);
   res.set('Cache-Control', 'public, max-age=86400');
-  res.json({ photo: await placePhoto(place) });
+  res.json({ photo: await placePhoto(place, { strict: req.query.strict === '1' }) });
 });
 
 metaRouter.get('/health', (req, res) => {

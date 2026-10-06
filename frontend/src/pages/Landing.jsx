@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { DemoTripButton } from '../components/DemoTripButton.jsx';
 import { formatINR } from '../lib/format.js';
 import { getRecentTrips } from '../lib/recentTrips.js';
+import { usePlacePhoto } from '../hooks/usePlacePhoto.js';
 import { ButtonLink } from '../components/ui/Button.jsx';
 import { Card } from '../components/ui/Card.jsx';
 import { Photo } from '../components/ui/Photo.jsx';
@@ -89,6 +90,11 @@ function Hero() {
   );
 }
 
+function TripThumb({ destination }) {
+  const live = usePlacePhoto(destination);
+  return <Photo photo={photoFor(destination, live)} showCredit={false} className="size-16 shrink-0 rounded-xl" />;
+}
+
 function ContinuePlanning() {
   const [trips] = useState(getRecentTrips);
   if (!trips.length) return null;
@@ -99,7 +105,7 @@ function ContinuePlanning() {
         {trips.map((t) => (
           <li key={t.id} className="shrink-0">
             <Link to={`/trip/${t.id}`} className="flex w-72 items-center gap-3 rounded-2xl bg-surface p-3 shadow-card ring-1 ring-line/70 transition hover:-translate-y-0.5 hover:ring-brand-500">
-              <Photo photo={photoFor(t.destination)} showCredit={false} className="size-16 shrink-0 rounded-xl" />
+              <TripThumb destination={t.destination} />
               <div className="min-w-0">
                 <p className="truncate font-semibold">{t.title}</p>
                 <p className="text-sm text-muted">

@@ -125,5 +125,5 @@ export function dayTheme(day, destinationText, livePhoto) {
   }
   const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0];
   if (!top) return { emoji: '📍', label: 'Explore', photo: destPhoto };
-  return { ...THEMES[top], photo: THEME_PHOTOS[top] || destPhoto };
+  return { ...THEMES[top], photo: THEME_PHOTOS[top] || destPhoto, themed: Boolean(THEME_PHOTOS[top]) };
 }
