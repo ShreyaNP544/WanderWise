@@ -27,6 +27,7 @@ npm run dev                             # API :5000 · web :5173
 - [Technical architecture](docs/ARCHITECTURE.md)
 - [AI / Gemma layer design](docs/AI_DESIGN.md)
 - [Real-world data sources](docs/DATA_SOURCES.md)
+- [Technical judging guide (AI/Gemma)](docs/JUDGING.md)
 - [Evaluation run](docs/EVAL.md)
 - [Demo script](docs/DEMO.md)
 - Photo credits: [frontend/public/images/CREDITS.md](frontend/public/images/CREDITS.md)
