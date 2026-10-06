@@ -10,8 +10,17 @@ export const config = {
     fallbackModel: process.env.GEMMA_HOSTED_FALLBACK_MODEL || 'gemma-4-31b-it',
   },
   ollama: {
+    enabled: process.env.OLLAMA_ENABLED !== 'false',
     url: process.env.OLLAMA_URL || 'http://localhost:11434',
     model: process.env.GEMMA_LOCAL_MODEL || 'gemma3:4b',
+  },
+  ai: {
+    // Gemma 4 "thinking": minimal is ~3x faster; raise to low/high for harder reasoning.
+    thinking: process.env.GEMMA_THINKING || 'minimal',
+    hostedTimeoutMs: Number(process.env.AI_TIMEOUT_MS) || 90_000,
+    localTimeoutMs: Number(process.env.AI_LOCAL_TIMEOUT_MS) || 180_000,
+    cache: process.env.AI_CACHE !== 'off',
+    debug: process.env.AI_DEBUG === 'true',
   },
   mongoUri: process.env.MONGODB_URI || '',
 };

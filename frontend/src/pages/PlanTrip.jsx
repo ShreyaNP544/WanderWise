@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+import { useSearchParams } from 'react-router';
 import { Alert } from '../components/ui/Alert.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { Card } from '../components/ui/Card.jsx';
@@ -14,7 +15,8 @@ import { STEPS } from '../lib/preferences.js';
 const stepComponents = [StepWhere, StepWho, StepStyle];
 
 export default function PlanTrip() {
-  const form = useTripForm();
+  const [params] = useSearchParams();
+  const form = useTripForm({ destination: params.get('destination')?.slice(0, 80) || '' });
   const { step, isLast, submitting, submitError } = form;
   const StepComponent = stepComponents[step];
   const headingRef = useRef(null);

@@ -1,5 +1,7 @@
 import { CalendarDays, Gauge, MapPin, Users, Wallet } from 'lucide-react';
 import { Card } from '../ui/Card.jsx';
+import { Photo } from '../ui/Photo.jsx';
+import { FALLBACK_PHOTO, matchDestination } from '../../lib/destinations.js';
 import { formatINR, plural } from '../../lib/format.js';
 import { PACES, TRAVELLER_TYPES } from '../../lib/tripOptions.js';
 
@@ -20,9 +22,18 @@ function Row({ Icon, label, children }) {
 /** Live summary of the trip being described: reassures the user as they fill the form. */
 export function TripSummary({ prefs }) {
   const route = [prefs.origin, prefs.destination].map((s) => s.trim()).filter(Boolean);
+  const match = matchDestination(prefs.destination);
   return (
-    <Card as="aside" className="p-6" aria-label="Trip summary">
+    <Card as="aside" className="overflow-hidden" aria-label="Trip summary">
+      <Photo key={match?.id || 'fallback'} photo={match?.photo || FALLBACK_PHOTO} className="aspect-video">
+        <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent" aria-hidden="true" />
+        <p className="absolute bottom-3 left-4 font-display text-2xl font-bold text-white">
+          {match ? match.name : prefs.destination.trim() || 'Somewhere new'}
+        </p>
+      </Photo>
+      <div className="p-6">
       <h2 className="text-xl font-bold">Your trip so far</h2>
+      {match && <p className="mt-1 text-sm text-brand-700">✓ Curated cost &amp; route data available</p>}
       <dl className="mt-5 grid gap-4">
         <Row Icon={MapPin} label="Route">
           {route.length ? route.join(' → ') : <span className="text-muted">Not set yet</span>}
@@ -50,6 +61,7 @@ export function TripSummary({ prefs }) {
           ))}
         </ul>
       )}
+      </div>
     </Card>
   );
 }

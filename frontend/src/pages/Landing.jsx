@@ -1,6 +1,9 @@
 import { ArrowRight, BadgeCheck, GitCompareArrows, Scale, Sparkles, Users, Wallet } from 'lucide-react';
+import { Link } from 'react-router';
 import { ButtonLink } from '../components/ui/Button.jsx';
 import { Card } from '../components/ui/Card.jsx';
+import { Photo } from '../components/ui/Photo.jsx';
+import { DESTINATIONS, HERO_PHOTO } from '../lib/destinations.js';
 
 const steps = [
   { title: 'Tell us the trip you want', body: 'Where, when, who, budget and the things you love (or hate).' },
@@ -52,31 +55,77 @@ function ReshapePreview() {
   );
 }
 
+function DestinationGrid() {
+  return (
+    <section aria-labelledby="destinations" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 id="destinations" className="text-3xl font-bold">Where to next?</h2>
+          <p className="mt-2 text-muted">Destinations with curated cost and route data. Or type anywhere you like.</p>
+        </div>
+      </div>
+      <ul className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        {DESTINATIONS.map((d, i) => (
+          <li key={d.id} className={i === 0 ? 'col-span-2 row-span-2' : ''}>
+            <Link
+              to={`/plan?destination=${encodeURIComponent(`${d.name}, ${d.region}`)}`}
+              className="group block h-full overflow-hidden rounded-card shadow-card"
+              aria-label={`Plan a trip to ${d.name}`}
+            >
+              <Photo
+                photo={d.photo}
+                className={i === 0 ? 'aspect-square h-full' : 'aspect-4/3 h-full'}
+                imgClassName="transition-transform duration-500 group-hover:scale-105"
+              >
+                <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/10 to-transparent" aria-hidden="true" />
+                <div className="absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
+                  <p className={i === 0 ? 'font-display text-3xl font-bold' : 'font-display text-xl font-bold'}>{d.name}</p>
+                  <p className="text-sm text-white/85">{d.blurb}</p>
+                </div>
+              </Photo>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export default function Landing() {
   return (
     <>
-      <section className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:py-24">
-        <div>
-          <p className="inline-flex items-center gap-2 rounded-full bg-sunset-100 px-3 py-1 text-sm font-semibold text-sunset-600">
-            <Sparkles className="size-4" aria-hidden="true" /> Your AI travel architect
-          </p>
-          <h1 className="mt-5 text-5xl font-bold leading-[1.05] sm:text-6xl">
-            Trip plans that <span className="text-brand-700">adapt</span> like you do.
-          </h1>
-          <p className="mt-5 max-w-xl text-lg text-muted">
-            Tell WanderWise the trip you want. It designs every day, explains its choices, balances your budget, and
-            lets you reshape the plan just by saying what changed.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <ButtonLink to="/plan" size="lg">
-              Plan my trip <ArrowRight className="size-5" aria-hidden="true" />
-            </ButtonLink>
+      <section className="relative isolate overflow-hidden">
+        <Photo photo={HERO_PHOTO} priority className="absolute inset-0 -z-10" imgClassName="object-[center_60%]">
+          <div className="absolute inset-0 bg-linear-to-r from-brand-900/90 via-brand-900/60 to-brand-900/10" aria-hidden="true" />
+        </Photo>
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:py-28">
+          <div className="text-white">
+            <p className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-sm font-semibold ring-1 ring-white/25 backdrop-blur">
+              <Sparkles className="size-4" aria-hidden="true" /> Your AI travel architect
+            </p>
+            <h1 className="mt-5 text-5xl font-bold leading-[1.05] sm:text-6xl">
+              Trip plans that <span className="text-sunset-100 italic">adapt</span> like you do.
+            </h1>
+            <p className="mt-5 max-w-xl text-lg text-white/85">
+              Tell WanderWise the trip you want. It designs every day, explains its choices, balances your budget, and
+              lets you reshape the plan just by saying what changed.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <ButtonLink to="/plan" variant="accent" size="lg">
+                Plan my trip <ArrowRight className="size-5" aria-hidden="true" />
+              </ButtonLink>
+              <a href="#destinations" className="inline-flex h-13 items-center rounded-full px-6 font-semibold text-white ring-1 ring-white/40 hover:bg-white/10">
+                Explore destinations
+              </a>
+            </div>
+          </div>
+          <div className="flex justify-center lg:justify-end">
+            <ReshapePreview />
           </div>
         </div>
-        <div className="flex justify-center lg:justify-end">
-          <ReshapePreview />
-        </div>
       </section>
+
+      <DestinationGrid />
 
       <section aria-labelledby="how" className="border-y border-line/70 bg-surface/60">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
