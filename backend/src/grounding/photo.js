@@ -1,7 +1,9 @@
 import { getJson } from './http.js';
 
 const DAY = 24 * 60 * 60 * 1000;
-const BAD_FILE = /map|flag|locator|location|emblem|logo|seal|coat[_ ]of|svg|png$|diagram|chart/i;
+const BAD_FILE = /map|flag|locator|location|emblem|logo|seal|coat[_ ]of|svg|diagram|chart/i;
+// Raster photos only; Wikipedia serves JPEG thumbnails even for PNG/TIF originals.
+const PHOTO_FILE = /\.(jpe?g|png|tiff?|webp)$/i;
 
 const strip = (html = '') => html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 
@@ -15,7 +17,7 @@ async function credit(file) {
 }
 
 /** Lead photo of the place's Wikipedia article, if it's a real landscape photo (not a map or flag). */
-async function wikipediaLead(title) {
+async function wikipediaLead(title, { thumb = false } = {}) {
   const data = await getJson(
     `https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1&titles=${encodeURIComponent(title)}&prop=pageimages&piprop=thumbnail|name|original&pithumbsize=1600`,
     { ttlMs: 7 * DAY, source: 'wikipedia-photo' }
@@ -23,7 +25,9 @@ async function wikipediaLead(title) {
   const page = Object.values(data?.query?.pages || {})[0];
   const file = page?.pageimage;
   const o = page?.original;
-  if (!file || !o || BAD_FILE.test(file) || !/\.jpe?g$/i.test(file) || o.width < o.height * 1.15 || o.width < 900) return null;
+  if (!file || !o || BAD_FILE.test(file) || !PHOTO_FILE.test(file)) return null;
+  // Banners need wide photos; small thumbnails can be any orientation (object-cover crops them).
+  if (thumb ? o.width < 500 : o.width < o.height * 1.15 || o.width < 900) return null;
   return { src: page.thumbnail?.source || o.source, file, title: page.title };
 }
 
@@ -47,14 +51,14 @@ async function commonsQuality(place) {
  * A credited, landscape photo for any Indian destination. Keyless (Wikipedia + Wikimedia Commons),
  * cached, and optional: returns null when nothing suitable exists, and the UI falls back gracefully.
  */
-export async function placePhoto(text, { strict = false } = {}) {
+export async function placePhoto(text, { strict = false, thumb = false } = {}) {
   if (!text) return null;
   const place = text.split(',')[0].trim();
   // strict: only an exact Wikipedia article match (used for free-text activity names, where a fuzzy
   // Commons search could return a photo of the wrong thing).
   const found = strict
-    ? await wikipediaLead(text.trim())
-    : (await wikipediaLead(text.trim())) || (place !== text.trim() && (await wikipediaLead(place))) || (await commonsQuality(place));
+    ? await wikipediaLead(text.trim(), { thumb })
+    : (await wikipediaLead(text.trim(), { thumb })) || (place !== text.trim() && (await wikipediaLead(place, { thumb }))) || (await commonsQuality(place));
   if (!found) return null;
   return {
     src: found.src,

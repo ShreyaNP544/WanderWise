@@ -38,7 +38,7 @@ const NO_PHOTO = new Set(['transport', 'rest']);
 function useActivityPhoto(a) {
   const known = a.placeName || a.baselineName || '';
   const name = NO_PHOTO.has(a.category) ? '' : known || a.title;
-  return usePlacePhoto(name, { skipCurated: false, strict: !known });
+  return usePlacePhoto(name, { skipCurated: false, strict: !known, thumb: true });
 }
 
 function ActivityItem({ activity, mark, destination, index }) {
