@@ -1,3 +1,4 @@
+import dns from 'node:dns';
 import mongoose from 'mongoose';
 
 // One collection, one document per trip; versions are embedded because a trip
@@ -24,6 +25,12 @@ const toTrip = (doc) => {
 };
 
 export async function mongoStore(uri) {
+  // Some home/office routers refuse the DNS SRV lookups that mongodb+srv:// needs
+  // ("querySrv ECONNREFUSED"). dns.setServers only affects dns.resolve*, not normal lookups.
+  if (uri.startsWith('mongodb+srv://')) {
+    const servers = (process.env.DNS_SERVERS || '8.8.8.8,1.1.1.1').split(',').map((s) => s.trim()).filter(Boolean);
+    if (servers.length) dns.setServers(servers);
+  }
   mongoose.set('strictQuery', true);
   await mongoose.connect(uri, { serverSelectionTimeoutMS: 8000 });
   return {
