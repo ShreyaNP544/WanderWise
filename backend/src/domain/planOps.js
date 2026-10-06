@@ -78,9 +78,19 @@ export function applyScope(prev, next, scopeDays) {
 const activityText = (a) => `${a.title} ${a.place} ${a.category} ${a.why}`.toLowerCase();
 
 /** Warnings for constraints the plan doesn't honour (checked by code, after Gemma). */
-export function constraintWarnings(plan, prefs, { keepInterests = [], interestPatterns = {} } = {}) {
+export function constraintWarnings(plan, prefs, { keepInterests = [], interestPatterns = {}, dest = null } = {}) {
   const warnings = [];
   const all = plan.days.flatMap((d) => d.activities);
+
+  // Stay prices vs our dataset: a "mid" room at a budget price is a mislabel, not a bargain.
+  if (dest) {
+    for (const s of plan.stay) {
+      const typical = s.per === 'bed' ? dest.hostelBedPerNight : dest.stayPerNight[s.tier];
+      if (typical && s.costPerNight < typical * 0.6) {
+        warnings.push(`₹${s.costPerNight.toLocaleString('en-IN')}/${s.per} looks low for a ${s.tier} ${s.type.toLowerCase()} in ${dest.name} (typically ~₹${typical.toLocaleString('en-IN')}). Check before booking.`);
+      }
+    }
+  }
 
   for (const term of prefs.avoid || []) {
     const hit = all.find((a) => activityText(a).includes(term.toLowerCase()));

@@ -13,6 +13,7 @@ import { AppError } from '../middleware/errors.js';
 import { getStore } from '../store/index.js';
 
 const MAX_VERSIONS = 15;
+const ADDITIVE = ['adventure', 'hidden_gem', 'food'];
 const newId = () => randomBytes(9).toString('base64url');
 const inFlight = new Set(); // one modification per trip at a time
 
@@ -130,7 +131,7 @@ export async function generateTrip(prefs) {
   const warnings = [
     ...overBudgetWarning(enforced.budget, feasibility),
     ...feasibility.notes,
-    ...constraintWarnings(enforced.plan, prefs),
+    ...constraintWarnings(enforced.plan, prefs, { dest }),
   ];
 
   const trip = {
@@ -212,7 +213,7 @@ async function runModification(id, { instruction, optionId }) {
   if (currentUnderNew.status === 'over' && !understood.strategies.includes('budget')) understood.strategies.push('budget');
   if (understood.strategies.length > 1) understood.strategies = understood.strategies.filter((s) => s !== 'general');
 
-  const edited = await ai.editPlan({
+  const editInput = {
     plan: current.plan,
     prefs: nextPrefs,
     previousPrefs: prefs,
@@ -222,7 +223,28 @@ async function runModification(id, { instruction, optionId }) {
     understood,
     budget: { current: currentUnderNew.total, cap: nextPrefs.budget, needed: Math.max(0, Math.round(currentUnderNew.total - nextPrefs.budget * 0.92)) },
     history,
-  });
+  };
+  let edited = await ai.editPlan(editInput);
+
+  // Code referees the claim: "add" requests must really add or change an activity in days[].
+  const additive = understood.strategies.some((s) => ADDITIVE.includes(s));
+  if (additive) {
+    const d = diffPlans(current.plan, edited.plan);
+    if (!d.added.length && !d.modified.length) {
+      try {
+        edited = await ai.editPlan({
+          ...editInput,
+          request: `${instruction}\n(Correction: your previous answer described an addition but did not put any new activity in "days". Add it as a new activity with id "n1" in the right day and time slot.)`,
+        });
+      } catch {
+        /* keep the first answer; the warning below will be honest about it */
+      }
+      const d2 = diffPlans(current.plan, edited.plan);
+      if (!d2.added.length && !d2.modified.length) {
+        edited.change.warnings = [...(edited.change.warnings || []), "Gemma described a new activity but didn't add one to the itinerary. Try rephrasing the request."];
+      }
+    }
+  }
 
   const scoped = applyScope(current.plan, edited.plan, understood.scope.days);
   const keep = [...understood.keep, ...understood.keepInterests];
@@ -233,7 +255,7 @@ async function runModification(id, { instruction, optionId }) {
   const warnings = [
     ...edited.change.warnings,
     ...overBudgetWarning(enforced.budget, feasibility),
-    ...constraintWarnings(enforced.plan, nextPrefs, { keepInterests: understood.keepInterests, interestPatterns: INTEREST_WORDS }),
+    ...constraintWarnings(enforced.plan, nextPrefs, { keepInterests: understood.keepInterests, interestPatterns: INTEREST_WORDS, dest }),
   ];
   const notes = [
     ...understood.assumptions,

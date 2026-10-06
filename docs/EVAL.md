@@ -18,6 +18,18 @@ Totals are computed by WanderWise's budget engine, not by the model. "Baseline" 
 | 3 | | "I care more about food than sightseeing" | Applied. +2 food experiences, −1, core heritage sights kept; ₹24,570 (within) | 84.0 s |
 | 4 | Bengaluru → Chikmagalur (no curated data), couple, veg, 4 days, ₹20,000 | Generate | 4 days, ₹18,480; 0 baseline matches, so every item is shown as an AI estimate | 32.9 s |
 
+## Remix My Trip run (sample trip: Delhi → Manali, 4 days, ₹17,010 of ₹20,000)
+Reproduce against a running server: `node scripts/remix-test.js`.
+
+| Request | Result | Time |
+|---|---|---|
+| "Make this trip 30% cheaper" | **Conflict, correctly.** 30% off (₹11,900) is below the ₹13,500 realistic floor for this route; Gemma offered raise budget / shorten / cheaper stays | 10.7 s |
+| "Make day 3 more relaxed" | Day 3 only: later start, Solang swapped for a café block. Days 1, 2, 4 locked by the scope guard | 37.3 s |
+| "I don't want to wake up before 8 AM" | The single 08:00 activity moved to 09:00; nothing else touched; knock-on effect flagged | 37.8 s |
+| "Give me one adventurous activity" | **Bug found:** summary said "Added paragliding" but no activity was added. **Fixed:** additive requests are now verified against the diff, with a correction pass and an honest warning if Gemma still doesn't add it | 75.2 s |
+| "Keep the budget unchanged but improve the hotel" | Hostel beds → private hotel room, total stayed within budget. **Found:** Gemma labelled ₹900/room "mid-tier" (dataset: ~₹2,500). **Fixed:** stay prices are now checked against the dataset tier and flagged | 70.6 s |
+| "I'm travelling with my parents" | **Conflict, correctly.** 4 people need more than ₹20,000; options: ₹31,500 budget (code-enforced ≥ floor × 1.15) / 2 travellers / 3 days | 11.0 s |
+
 ## What this shows
 - **Edits, not regenerations:** across 6 modifications, unchanged activities kept their IDs (e.g. 11/11, 10/11, 8/9 preserved).
 - **Scope guard works:** a day-3 request cannot alter other days.

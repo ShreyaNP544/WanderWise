@@ -28,4 +28,5 @@ npm run dev                             # API :5000 · web :5173
 - [AI / Gemma layer design](docs/AI_DESIGN.md)
 - [Real-world data sources](docs/DATA_SOURCES.md)
 - [Evaluation run](docs/EVAL.md)
+- [Demo script](docs/DEMO.md)
 - Photo credits: [frontend/public/images/CREDITS.md](frontend/public/images/CREDITS.md)
