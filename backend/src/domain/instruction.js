@@ -10,7 +10,10 @@ const STRATEGY_PATTERNS = {
   fatigue: /\b(tiring|tired|exhausting|hectic|relax|relaxed|slow|slower|easier|rest|chill|less walking|lazy)\b/i,
   family: /\b(parents?|mom|dad|mother|father|family|kids?|children|child|elderly|grand(?:ma|pa|parents)?|senior)\b/i,
   food: /\b(food|foodie|eat|eating|cuisine|restaurant|street food|veg|vegetarian|vegan|jain|halal|dining|cafe|cafes)\b/i,
-  hidden_gem: /\b(hidden[- ]gems?|offbeat|off-beat|less touristy|untouristy|local secret|unexplored|crowd-free)\b/i,
+  hidden_gem: /\b(hidden[- ]gems?|offbeat|off-beat|touristy|untouristy|local secret|unexplored|crowd-free|crowds?|quiet|quieter|peaceful)\b/i,
+  adventure: /\b(adventur\w*|thrill\w*|adrenaline|rafting|paragliding|trekking|bungee)\b/i,
+  stay: /\b(hotel|stay|room|rooms|accommodation|homestay|hostel|resort)\b/i,
+  timing: /\b(wake|wake up|early|late start|sleep in|lie in)\b/i,
   replace: /\b(replace|swap|instead of|substitute|remove|drop|skip)\b/i,
 };
 
@@ -46,9 +49,10 @@ export function parseInstruction(text, prefs, currentTotal) {
     .map((m) => parseAmount(m[1]))
     .filter((n) => n >= 1000 && n <= 1_000_000);
   amounts.push(...bare);
-  const pct = t.match(/\b(?:by|cut|reduce|lower)\D{0,12}(\d{1,2})\s?%/i);
+  const pct = t.match(/\b(?:by|cut|reduce|lower)\D{0,12}(\d{1,2})\s?%/i) || t.match(/\b(\d{1,2})\s?%\s*(?:cheaper|less|lower|off)/i);
   if (amounts.length) patch.budget = amounts.at(-1);
-  else if (pct) patch.budget = Math.round((prefs.budget * (100 - Number(pct[1]))) / 100);
+  // "30% cheaper" is relative to what the trip actually costs, not the cap.
+  else if (pct) patch.budget = Math.round((Math.min(currentTotal || prefs.budget, prefs.budget) * (100 - Number(pct[1]))) / 100 / 100) * 100;
 
   // ── Travellers
   const people = t.match(/\b(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:of us|people|persons|travell?ers|adults|friends|members)\b/i);
@@ -73,6 +77,15 @@ export function parseInstruction(text, prefs, currentTotal) {
   const diet = t.match(/\b(vegetarian|vegan|jain|halal)\b/i) || (/\bveg\b/i.test(t) ? ['', 'vegetarian'] : null);
   if (diet && !/\bnon[- ]veg/i.test(t)) patch.diet = diet[1].toLowerCase();
 
+  // ── Earliest start ("I don't want to wake up before 8 AM", "nothing before 9")
+  const early = t.match(/\b(?:before|earlier than)\s+(\d{1,2})(?::(\d{2}))?\s*(?:am|a\.m\.)?/i);
+  if (early && /\b(wake|start|nothing|no activit|don'?t|not)\b/i.test(t)) {
+    const h = Number(early[1]);
+    if (h >= 5 && h <= 11) patch.notBefore = `${String(h).padStart(2, '0')}:${early[2] || '00'}`;
+  } else if (/\bno early (?:mornings?|starts?)\b|\bsleep in\b/i.test(t)) {
+    patch.notBefore = '08:30';
+  }
+
   // ── Scope: specific days, else the whole trip
   const lastDay = patch.days || prefs.days;
   const scopeDays = new Set([...t.matchAll(/\bday\s*(\d{1,2})\b/gi)].map((m) => Number(m[1])).filter((d) => d >= 1 && d <= lastDay));
@@ -93,8 +106,12 @@ export function parseInstruction(text, prefs, currentTotal) {
     if (i >= 0) strategies.splice(i, 1);
   }
 
+  // "Keep the budget unchanged / same budget" means: do NOT cut, just stay within the cap.
+  const keepBudget = !patch.budget && /\b(?:keep|same|unchanged|don'?t change)\b[^.]{0,20}\bbudget\b|\bbudget\b[^.]{0,15}\b(?:unchanged|same)\b/i.test(t);
+  if (keepBudget && strategies.includes('budget')) strategies.splice(strategies.indexOf('budget'), 1);
+
   // "cheaper" with no number → aim ~15% under the current total
-  if (strategies.includes('budget') && !patch.budget && /\b(cheap|cheaper|expensive|save|reduce|lower|cut)\b/i.test(t) && currentTotal) {
+  if (!keepBudget && strategies.includes('budget') && !patch.budget && /\b(cheap|cheaper|expensive|save|reduce|lower|cut)\b/i.test(t) && currentTotal) {
     patch.budget = Math.max(1000, Math.round((Math.min(currentTotal, prefs.budget) * 0.85) / 500) * 500);
     assumptions.push(`No amount given; aiming for about 15% cheaper (₹${patch.budget.toLocaleString('en-IN')}).`);
   }

@@ -17,6 +17,11 @@ tripsRouter.post('/', aiLimiter, async (req, res) => {
   res.status(201).json({ trip: await trips.generateTrip(prefs) });
 });
 
+// Must come before /:id
+tripsRouter.post('/demo', async (req, res) => {
+  res.status(201).json({ trip: await trips.createDemoTrip() });
+});
+
 tripsRouter.get('/:id', async (req, res) => {
   res.json({ trip: await trips.getTrip(idSchema.parse(req.params.id)) });
 });

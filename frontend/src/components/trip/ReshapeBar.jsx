@@ -38,7 +38,7 @@ export function ReshapeBar({ onSubmit, onUndo, canUndo, busy }) {
           }}
         >
           <label htmlFor="reshape" className="sr-only">
-            Reshape your trip
+            Remix your trip
           </label>
           <div className="relative flex-1">
             <Wand2 className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-brand-700" aria-hidden="true" />
@@ -48,7 +48,7 @@ export function ReshapeBar({ onSubmit, onUndo, canUndo, busy }) {
               onChange={(e) => setText(e.target.value)}
               maxLength={300}
               disabled={busy}
-              placeholder="Reshape your trip, e.g. “Bring it under ₹15,000 but keep the mountains”"
+              placeholder="Remix your trip, e.g. “Make this trip 30% cheaper but keep the mountains”"
               className="h-13 w-full rounded-full bg-surface pl-12 pr-4 text-base shadow-card ring-1 ring-line placeholder:text-muted/70 focus:outline-none focus:ring-2 focus:ring-brand-500 disabled:opacity-60"
             />
           </div>

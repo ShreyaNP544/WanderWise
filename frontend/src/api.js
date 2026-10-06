@@ -52,6 +52,7 @@ async function request(path, { method = 'GET', body, signal } = {}) {
 export const api = {
   health: (opts) => request('/health', opts),
   createTrip: (preferences, opts) => request('/trips', { method: 'POST', body: { preferences }, ...opts }),
+  demoTrip: () => request('/trips/demo', { method: 'POST', body: {} }),
   getTrip: (id, opts) => request(`/trips/${encodeURIComponent(id)}`, opts),
   modifyTrip: (id, body, opts) => request(`/trips/${encodeURIComponent(id)}/modify`, { method: 'POST', body, ...opts }),
   undoTrip: (id) => request(`/trips/${encodeURIComponent(id)}/undo`, { method: 'POST', body: {} }),

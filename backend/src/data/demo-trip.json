@@ -1,0 +1,370 @@
+{
+ "id": "lGQOi7uLpGjG",
+ "createdAt": "2026-10-06T08:44:40.251Z",
+ "versions": [
+  {
+   "createdAt": "2026-10-06T08:44:40.251Z",
+   "instruction": null,
+   "preferences": {
+    "origin": "Delhi",
+    "destination": "Manali, Himachal",
+    "startDate": "2026-10-13",
+    "days": 4,
+    "budget": 20000,
+    "travellers": 2,
+    "travellerType": "friends",
+    "interests": [
+     "Mountains",
+     "Photography",
+     "Food"
+    ],
+    "pace": "moderate",
+    "stay": "budget",
+    "transport": "bus",
+    "diet": "any",
+    "constraints": "",
+    "avoid": []
+   },
+   "plan": {
+    "title": "Budget Mountain Peaks & Old Manali Vibes",
+    "summary": "An affordable 4-day mountain escape focused on high-altitude scenery and local culture. This version optimizes transport and food costs to stay within the group budget.",
+    "days": [
+     {
+      "day": 1,
+      "title": "Journey to the Mountains",
+      "type": "travel",
+      "activities": [
+       {
+        "id": "d1a1",
+        "time": "20:00",
+        "title": "Overnight Bus to Manali",
+        "place": "Delhi to Manali",
+        "category": "transport",
+        "costPerPerson": 800,
+        "durationHrs": 13,
+        "energy": 1,
+        "why": "Cost-effective way to reach the mountains for photography enthusiasts.",
+        "confidence": "high",
+        "source": "ai_estimate"
+       }
+      ],
+      "energy": 1
+     },
+     {
+      "day": 2,
+      "title": "Temples and Riverside Cafés",
+      "type": "explore",
+      "activities": [
+       {
+        "id": "d2a1",
+        "time": "10:00",
+        "title": "Hadimba Devi Temple Visit",
+        "place": "Hadimba Devi Temple",
+        "category": "culture",
+        "costPerPerson": 0,
+        "durationHrs": 1,
+        "energy": 1,
+        "why": "Iconic wooden architecture perfect for mountain photography.",
+        "confidence": "high",
+        "placeName": "Hidimba Devi Temple",
+        "placeUrl": "https://en.wikipedia.org/wiki/Hidimba_Devi_Temple",
+        "source": "baseline",
+        "baselineName": "Hadimba Devi Temple",
+        "baselineCost": 0
+       },
+       {
+        "id": "d2a2",
+        "time": "13:00",
+        "title": "Old Manali Café Exploration",
+        "place": "Old Manali village",
+        "category": "food",
+        "costPerPerson": 0,
+        "durationHrs": 3,
+        "energy": 1,
+        "why": "Diverse food options and aesthetic street photography opportunities.",
+        "confidence": "high",
+        "hiddenGem": true,
+        "source": "baseline",
+        "baselineName": "Old Manali village walk & cafés",
+        "baselineCost": 0
+       },
+       {
+        "id": "d2a3",
+        "time": "17:00",
+        "title": "Vashisht Hot Springs",
+        "place": "Vashisht",
+        "category": "culture",
+        "costPerPerson": 0,
+        "durationHrs": 1.5,
+        "energy": 1,
+        "why": "Relaxing soak after a long travel day.",
+        "confidence": "high",
+        "source": "baseline",
+        "baselineName": "Vashisht hot springs",
+        "baselineCost": 0
+       }
+      ],
+      "energy": 2
+     },
+     {
+      "day": 3,
+      "title": "High Altitude Wonders",
+      "type": "explore",
+      "activities": [
+       {
+        "id": "d3a1",
+        "time": "08:00",
+        "title": "Atal Tunnel & Sissu Excursion",
+        "place": "Atal Tunnel & Sissu",
+        "category": "nature",
+        "costPerPerson": 900,
+        "durationHrs": 6,
+        "energy": 2,
+        "why": "Dramatic landscape changes and stunning high-altitude photography.",
+        "confidence": "high",
+        "source": "baseline",
+        "baselineName": "Atal Tunnel & Sissu day trip",
+        "baselineCost": 900,
+        "note": "Shared taxi share; private cab ~₹3,500/vehicle"
+       },
+       {
+        "id": "d3a2",
+        "time": "16:00",
+        "title": "Solang Valley Views",
+        "place": "Solang Valley",
+        "category": "nature",
+        "costPerPerson": 0,
+        "durationHrs": 2,
+        "energy": 2,
+        "why": "Panoramic views of the snow-capped peaks.",
+        "confidence": "high",
+        "placeName": "Solang Valley",
+        "placeUrl": "https://en.wikipedia.org/wiki/Solang_Valley",
+        "source": "baseline",
+        "baselineName": "Solang Valley",
+        "baselineCost": 0,
+        "note": "Paragliding ₹2,500–3,500 extra"
+       }
+      ],
+      "energy": 2
+     },
+     {
+      "day": 4,
+      "title": "Waterfall Hike and Departure",
+      "type": "explore",
+      "activities": [
+       {
+        "id": "d4a1",
+        "time": "09:00",
+        "title": "Jogini Falls Hike",
+        "place": "Jogini Falls",
+        "category": "nature",
+        "costPerPerson": 0,
+        "durationHrs": 3,
+        "energy": 3,
+        "why": "Stunning waterfall scenery for nature photography.",
+        "confidence": "high",
+        "source": "baseline",
+        "baselineName": "Jogini Falls hike",
+        "baselineCost": 0
+       },
+       {
+        "id": "d4a2",
+        "time": "15:00",
+        "title": "Return Journey",
+        "place": "Manali to Delhi",
+        "category": "transport",
+        "costPerPerson": 800,
+        "durationHrs": 13,
+        "energy": 1,
+        "why": "Heading back to Delhi.",
+        "confidence": "high",
+        "source": "ai_estimate"
+       }
+      ],
+      "energy": 2
+     }
+    ],
+    "stay": [
+     {
+      "nights": 2,
+      "area": "Old Manali",
+      "type": "hostel",
+      "tier": "budget",
+      "per": "bed",
+      "costPerNight": 500
+     }
+    ],
+    "transport": [
+     {
+      "leg": "Delhi → Manali",
+      "mode": "bus",
+      "costPerPerson": 800,
+      "hours": 13
+     },
+     {
+      "leg": "Manali → Delhi",
+      "mode": "bus",
+      "costPerPerson": 800,
+      "hours": 13
+     }
+    ],
+    "foodPerPersonPerDay": 450,
+    "localTransportPerPersonPerDay": 300,
+    "whyItWorks": [
+     "Prioritizes high-altitude photography with the Atal Tunnel and Solang Valley trips.",
+     "Keeps food and accommodation at budget levels to allow for mountain excursions.",
+     "Uses HRTC buses to significantly reduce intercity travel costs."
+    ],
+    "assumptions": [
+     "Travelers will use HRTC ordinary buses instead of Volvo buses to save money.",
+     "The group will share costs for local transport and Sissu excursions."
+    ],
+    "checkBefore": [
+     "Check HRTC bus schedules for the Delhi-Manali route.",
+     "Confirm if shared taxi availability for Sissu is consistent for October dates."
+    ],
+    "tradeoffNotes": []
+   },
+   "budget": {
+    "stay": 2000,
+    "transport": 8800,
+    "food": 3600,
+    "activities": 1800,
+    "buffer": 810,
+    "total": 17010,
+    "perPerson": 8505,
+    "cap": 20000,
+    "remaining": 2990,
+    "status": "within"
+   },
+   "change": null,
+   "diff": null,
+   "warnings": [],
+   "ai": {
+    "provider": "ai-studio",
+    "model": "gemma-4-26b-a4b-it",
+    "latencyMs": 40755,
+    "repaired": false,
+    "fallback": false
+   }
+  }
+ ],
+ "current": 0,
+ "history": [],
+ "pendingConflict": null,
+ "context": {
+  "fetchedAt": "2026-10-06T08:43:23.619Z",
+  "location": {
+   "name": "Manali",
+   "region": "Himachal Pradesh",
+   "district": "",
+   "lat": 32.2432,
+   "lon": 77.1892,
+   "elevationM": null,
+   "source": "WanderWise curated coordinates"
+  },
+  "origin": {
+   "name": "Delhi",
+   "region": "National Capital Territory of Delhi",
+   "lat": 28.65195,
+   "lon": 77.23149
+  },
+  "distanceKm": 399,
+  "places": [
+   {
+    "name": "Hidimba Devi Temple",
+    "description": "Hindu temple in Himachal Pradesh, India",
+    "lat": 32.24228,
+    "lon": 77.187366,
+    "url": "https://en.wikipedia.org/wiki/Hidimba_Devi_Temple"
+   },
+   {
+    "name": "Manali Sanctuary",
+    "description": "Wildlife sanctuary in Himachal Pradesh, India",
+    "lat": 32.247,
+    "lon": 77.19,
+    "url": "https://en.wikipedia.org/wiki/Manali_Sanctuary"
+   },
+   {
+    "name": "Leh–Manali Highway",
+    "description": "High elevation mountain highway in India",
+    "lat": 32.2495793,
+    "lon": 77.1905049,
+    "url": "https://en.wikipedia.org/wiki/Leh%E2%80%93Manali_Highway"
+   },
+   {
+    "name": "Solang Valley",
+    "description": "Valley in Himachal Pradesh, India",
+    "lat": 32.316,
+    "lon": 77.157,
+    "url": "https://en.wikipedia.org/wiki/Solang_Valley"
+   },
+   {
+    "name": "Bhrigu Lake",
+    "description": "Lake in Himachal Pradesh, India",
+    "lat": 32.29342,
+    "lon": 77.24249,
+    "url": "https://en.wikipedia.org/wiki/Bhrigu_Lake"
+   },
+   {
+    "name": "Gulaba",
+    "description": "Mountain pass in India",
+    "lat": 32.323,
+    "lon": 77.201,
+    "url": "https://en.wikipedia.org/wiki/Gulaba"
+   },
+   {
+    "name": "Atal Bihari Vajpayee Institute of Mountaineering and Allied Sports",
+    "description": "Mountaineering institute in Manali, Himachal Pradesh, India",
+    "lat": 32.232,
+    "lon": 77.192,
+    "url": "https://en.wikipedia.org/wiki/Atal_Bihari_Vajpayee_Institute_of_Mountaineering_and_Allied_Sports"
+   }
+  ],
+  "weather": {
+   "status": "forecast",
+   "source": "Open-Meteo forecast",
+   "fetchedAt": "2026-10-06T08:43:23.618Z",
+   "days": [
+    {
+     "day": 1,
+     "date": "2026-10-13",
+     "summary": "Drizzle",
+     "maxC": 23,
+     "minC": 10,
+     "rainChance": 18
+    },
+    {
+     "day": 2,
+     "date": "2026-10-14",
+     "summary": "Overcast",
+     "maxC": 23,
+     "minC": 11,
+     "rainChance": 18
+    },
+    {
+     "day": 3,
+     "date": "2026-10-15",
+     "summary": "Drizzle",
+     "maxC": 22,
+     "minC": 9,
+     "rainChance": 16
+    },
+    {
+     "day": 4,
+     "date": "2026-10-16",
+     "summary": "Partly cloudy",
+     "maxC": 21,
+     "minC": 7,
+     "rainChance": 20
+    }
+   ]
+  },
+  "sources": [
+   "Open-Meteo Geocoding",
+   "Wikipedia",
+   "Open-Meteo Forecast"
+  ]
+ }
+}

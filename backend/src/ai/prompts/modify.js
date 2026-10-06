@@ -30,6 +30,19 @@ export const STRATEGIES = {
 - Unless it appears in <baseline_data>, set confidence to "low" or "medium" and add a "checkBefore" item.
 - Replace a weaker activity rather than overloading the day.`,
 
+  adventure: () => `### Strategy: add adventure
+- Add the number of adventurous activities asked for (default one) that suits the destination; prefer adventure attractions from <baseline_data>.
+- Energy 3 is fine for it unless the group includes parents, elderly or small kids (then choose a gentler thrill).
+- Replace a weaker activity rather than overloading the day, and keep the total within the budget cap.`,
+
+  stay: () => `### Strategy: stay adjustment
+- Change the accommodation as asked (e.g. a better tier or a nicer area), using stay prices from <baseline_data>.
+- If the budget must stay the same, fund the upgrade by trimming lower-priority spending elsewhere and say exactly where in change.summary.`,
+
+  timing: () => `### Strategy: daily timing
+- Respect the traveller's earliest start time on every non-travel day: move activities later, shorten or drop them rather than starting early.
+- Sunrise-only experiences that cannot move should be replaced, and mentioned in change.warnings.`,
+
   replace: () => `### Strategy: replace activity
 - Replace only the activity or activities the traveller refers to, in the same day and time slot.
 - The replacement should cost the same or less unless they asked otherwise, and match their interests.`,

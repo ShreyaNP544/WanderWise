@@ -94,6 +94,10 @@ export function constraintWarnings(plan, prefs, { keepInterests = [], interestPa
     const re = interestPatterns[interest];
     if (re && !all.some((a) => re.test(activityText(a)))) warnings.push(`No clear ${interest.toLowerCase()} experience is left in the plan.`);
   }
+  if (prefs.notBefore) {
+    const early = all.filter((a) => a.category !== 'transport' && a.time && a.time < prefs.notBefore);
+    if (early.length) warnings.push(`${early.length} activit${early.length === 1 ? 'y starts' : 'ies start'} before ${prefs.notBefore}: ${early.map((a) => a.title).join(', ')}.`);
+  }
   if (plan.days.length !== prefs.days) warnings.push(`Plan has ${plan.days.length} days but the trip is ${prefs.days} days.`);
   return warnings;
 }

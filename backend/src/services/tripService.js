@@ -1,4 +1,5 @@
 import { randomBytes } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 import * as ai from '../ai/index.js';
 import { inr } from '../ai/prompts/shared.js';
 import { buildContext, contextForPrompt } from '../grounding/index.js';
@@ -93,6 +94,8 @@ export function serializeTrip(trip) {
     versionCount: trip.versions.length,
     history: trip.history,
     pendingConflict: trip.pendingConflict,
+    // The version this one was derived from, so the UI can show a real before/after.
+    previous: trip.current > 0 ? { plan: trip.versions[trip.current - 1].plan, budget: trip.versions[trip.current - 1].budget } : null,
     context: trip.context && {
       location: trip.context.location,
       distanceKm: trip.context.distanceKm,
@@ -254,6 +257,30 @@ async function runModification(id, { instruction, optionId }) {
   trip.pendingConflict = null;
   await store.save(trip);
   return { kind: 'applied', trip: serializeTrip(trip) };
+}
+
+// ─────────────────────────────── Demo trip ───────────────────────────────
+
+const DEMO_FILE = new URL('../data/demo-trip.json', import.meta.url);
+
+/** A pre-generated showcase trip: opens instantly and never depends on Gemma being up. */
+export async function createDemoTrip() {
+  let template;
+  try {
+    template = JSON.parse(await readFile(DEMO_FILE, 'utf8'));
+  } catch {
+    throw new AppError(404, 'NOT_FOUND', 'The demo trip is not available yet.');
+  }
+  const trip = { ...structuredClone(template), id: newId(), createdAt: new Date().toISOString() };
+  await getStore().save(trip);
+  return serializeTrip(trip);
+}
+
+/** Used by scripts/make-demo.js to snapshot a real generated trip. */
+export async function exportTrip(id) {
+  const trip = await getStore().get(id);
+  if (!trip) throw new AppError(404, 'NOT_FOUND', 'Trip not found.');
+  return trip;
 }
 
 // ─────────────────────────────── Read / undo ───────────────────────────────

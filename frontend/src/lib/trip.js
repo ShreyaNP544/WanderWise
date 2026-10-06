@@ -55,12 +55,14 @@ export function addDays(iso, n) {
 }
 
 export const RESHAPE_SUGGESTIONS = [
-  'Make it cheaper but keep the highlights',
-  'Make day 2 less tiring',
-  'Add one hidden-gem experience',
-  'I care more about food than sightseeing',
-  "My parents are joining us",
-  'More nature, less shopping',
+  'Make this trip 30% cheaper',
+  'Make day 2 more relaxed',
+  'Replace touristy places with quieter experiences',
+  'Add more local food',
+  "I'm travelling with my parents",
+  'Give me one adventurous activity',
+  "I don't want to wake up before 8 AM",
+  'Keep the budget unchanged but improve the hotel',
 ];
 
 export const LOADING_LINES = {

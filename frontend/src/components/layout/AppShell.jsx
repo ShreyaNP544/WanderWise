@@ -2,6 +2,7 @@ import { Compass } from 'lucide-react';
 import { Link, NavLink, Outlet } from 'react-router';
 import { cn } from '../../lib/cn.js';
 import { StatusBadge } from './StatusBadge.jsx';
+import { DemoTripButton } from '../DemoTripButton.jsx';
 
 export function Logo() {
   return (
@@ -27,7 +28,10 @@ export function AppShell() {
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Logo />
           <nav aria-label="Main" className="flex items-center gap-1 sm:gap-3">
-            <NavLink to="/plan" className={navClass}>
+            <DemoTripButton className="hidden rounded-full px-3 py-1.5 text-sm font-semibold text-muted hover:text-ink md:inline-flex">
+              Sample trip
+            </DemoTripButton>
+            <NavLink to="/plan" className={({ isActive }) => cn(navClass({ isActive }), 'bg-brand-700 text-white hover:bg-brand-900 hover:text-white')}>
               Plan a trip
             </NavLink>
             <span className="hidden sm:block">

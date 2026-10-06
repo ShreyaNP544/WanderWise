@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import { ArrowRight, BadgeCheck, CloudSun, GitCompareArrows, MapPin, Scale, Sparkles, Users, Wallet } from 'lucide-react';
 import { Link } from 'react-router';
+import { DemoTripButton } from '../components/DemoTripButton.jsx';
+import { formatINR } from '../lib/format.js';
+import { getRecentTrips } from '../lib/recentTrips.js';
 import { ButtonLink } from '../components/ui/Button.jsx';
 import { Card } from '../components/ui/Card.jsx';
 import { Photo } from '../components/ui/Photo.jsx';
 import { cn } from '../lib/cn.js';
-import { DESTINATIONS, FALLBACK_PHOTO, HERO_PHOTO } from '../lib/destinations.js';
+import { DESTINATIONS, FALLBACK_PHOTO, HERO_PHOTO, photoFor } from '../lib/destinations.js';
 
 const byId = Object.fromEntries(DESTINATIONS.map((d) => [d.id, d]));
 const planLink = (d) => `/plan?destination=${encodeURIComponent(`${d.name}, ${d.region}`)}`;
@@ -65,9 +69,7 @@ function Hero() {
               <ButtonLink to="/plan" variant="accent" size="lg">
                 Plan my trip <ArrowRight className="size-5" aria-hidden="true" />
               </ButtonLink>
-              <a href="#vibes" className="inline-flex h-13 items-center rounded-full bg-white/15 px-6 font-semibold text-white ring-1 ring-white/40 backdrop-blur hover:bg-white/25">
-                Find your vibe
-              </a>
+              <DemoTripButton className="h-13 rounded-full bg-white/15 px-6 font-semibold text-white ring-1 ring-white/40 backdrop-blur hover:bg-white/25" />
             </div>
             <ul className="mt-8 flex flex-wrap gap-2 text-sm font-semibold text-shadow-none">
               {['🗺️ Real places', '🌦️ Live weather', '💸 Budgets that add up', '🤖 Powered by Gemma'].map((t) => (
@@ -83,6 +85,31 @@ function Hero() {
           </div>
         </div>
       </div>
+    </section>
+  );
+}
+
+function ContinuePlanning() {
+  const [trips] = useState(getRecentTrips);
+  if (!trips.length) return null;
+  return (
+    <section aria-labelledby="continue-title" className="mx-auto max-w-7xl px-4 pt-10 sm:px-6">
+      <h2 id="continue-title" className="text-2xl font-bold">Continue planning</h2>
+      <ul className="mt-4 flex gap-3 overflow-x-auto pb-2">
+        {trips.map((t) => (
+          <li key={t.id} className="shrink-0">
+            <Link to={`/trip/${t.id}`} className="flex w-72 items-center gap-3 rounded-2xl bg-surface p-3 shadow-card ring-1 ring-line/70 transition hover:-translate-y-0.5 hover:ring-brand-500">
+              <Photo photo={photoFor(t.destination)} showCredit={false} className="size-16 shrink-0 rounded-xl" />
+              <div className="min-w-0">
+                <p className="truncate font-semibold">{t.title}</p>
+                <p className="text-sm text-muted">
+                  {t.days} days · {formatINR(t.total)}
+                </p>
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
@@ -256,6 +283,7 @@ export default function Landing() {
   return (
     <>
       <Hero />
+      <ContinuePlanning />
       <PhotoMarquee />
       <Vibes />
       <HowItWorks />

@@ -31,15 +31,16 @@ function WeatherChip({ weather }) {
   );
 }
 
-function ActivityItem({ activity, mark, destination }) {
+function ActivityItem({ activity, mark, destination, index }) {
   const cat = CATEGORY[activity.category] || CATEGORY.sightseeing;
   return (
     <li
       className={cn(
         'relative grid grid-cols-[3.25rem_1fr] gap-3 rounded-2xl p-3 transition-colors',
-        mark === 'added' && 'bg-green-50 ring-2 ring-ok/40',
-        mark === 'modified' && 'bg-sunset-100/60 ring-2 ring-sunset-500/40'
+        mark === 'added' && 'animate-remix-in bg-green-50 ring-2 ring-ok/40',
+        mark === 'modified' && 'animate-remix-in bg-sunset-100/60 ring-2 ring-sunset-500/40'
       )}
+      style={mark ? { animationDelay: `${index * 80}ms` } : undefined}
     >
       <div className="flex flex-col items-center gap-1.5 pt-0.5">
         <span className="text-xs font-bold tabular-nums text-muted">{activity.time || '—'}</span>
@@ -91,7 +92,7 @@ function ActivityItem({ activity, mark, destination }) {
 export function DayCard({ day, date, weather, marks, destination }) {
   const changed = day.activities.some((a) => marks[a.id]);
   return (
-    <Card as="section" className={cn('p-4 sm:p-6', changed && 'ring-2 ring-sunset-500/30')} aria-labelledby={`day-${day.day}`}>
+    <Card as="section" className={cn('p-4 sm:p-6', changed && 'animate-remix-glow ring-2 ring-sunset-500/30')} aria-labelledby={`day-${day.day}`}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-start gap-3">
           <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-brand-700 text-white">
@@ -114,8 +115,8 @@ export function DayCard({ day, date, weather, marks, destination }) {
         </div>
       </div>
       <ol className="mt-4 grid gap-1">
-        {day.activities.map((a) => (
-          <ActivityItem key={a.id} activity={a} mark={marks[a.id]} destination={destination} />
+        {day.activities.map((a, i) => (
+          <ActivityItem key={a.id} activity={a} mark={marks[a.id]} destination={destination} index={i} />
         ))}
       </ol>
     </Card>
