@@ -2,8 +2,6 @@ import { readFileSync } from 'node:fs';
 
 const dataset = JSON.parse(readFileSync(new URL('../data/destinations.json', import.meta.url), 'utf8'));
 
-export const DATA_NOTE = dataset.about;
-
 const ORIGIN_ALIASES = {
   mumbai: ['mumbai', 'bombay', 'thane', 'navi mumbai'],
   delhi: ['delhi', 'new delhi', 'gurgaon', 'gurugram', 'noida', 'ghaziabad', 'ncr'],

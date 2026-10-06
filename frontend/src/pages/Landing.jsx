@@ -150,7 +150,7 @@ function Vibes() {
         {VIBES.map((v, i) => (
           <li key={v.title} className={i === 0 ? 'col-span-2 md:col-span-1' : ''}>
             <Link to={planLink(v.dest)} className="group block overflow-hidden rounded-3xl shadow-card transition hover:-translate-y-1 hover:rotate-1 hover:shadow-xl">
-              <Photo photo={v.photo || v.dest.photo} className="aspect-3/4 max-h-80 w-full" imgClassName="transition-transform duration-500 group-hover:scale-110">
+              <Photo photo={v.photo || v.dest.photo} creditLink={false} className="aspect-3/4 max-h-80 w-full" imgClassName="transition-transform duration-500 group-hover:scale-110">
                 <div className={cn('absolute inset-0 bg-linear-to-t via-black/10 to-transparent', v.tint)} aria-hidden="true" />
                 <div className="absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
                   <span className="text-3xl" aria-hidden="true">{v.emoji}</span>
@@ -235,7 +235,7 @@ function DestinationGrid() {
         {DESTINATIONS.map((d) => (
           <li key={d.id}>
             <Link to={planLink(d)} className="group block overflow-hidden rounded-3xl shadow-card transition hover:-translate-y-1 hover:shadow-xl" aria-label={`Plan a trip to ${d.name}`}>
-              <Photo photo={d.photo} className="aspect-4/3" imgClassName="transition-transform duration-500 group-hover:scale-110">
+              <Photo photo={d.photo} creditLink={false} className="aspect-4/3" imgClassName="transition-transform duration-500 group-hover:scale-110">
                 <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/5 to-transparent" aria-hidden="true" />
                 <div className="absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
                   <p className="font-display text-xl font-bold">{d.name}</p>

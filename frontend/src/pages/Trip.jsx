@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { MapPinOff } from 'lucide-react';
 import { useParams } from 'react-router';
 import { Alert } from '../components/ui/Alert.jsx';
@@ -27,9 +27,13 @@ export default function Trip() {
   const livePhoto = usePlacePhoto(trip && !trip.context?.photo ? trip.preferences.destination : '');
   const marks = useMemo(() => (t.showChange ? changeMarks(trip?.version.diff) : {}), [t.showChange, trip]);
 
+  const notFound = t.loadError && (t.loadError.code === 'NOT_FOUND' || t.loadError.code === 'VALIDATION_ERROR');
+  useEffect(() => {
+    if (notFound) forgetTrip(id);
+  }, [notFound, id]);
+
   if (t.loadError) {
-    if (t.loadError.code === 'NOT_FOUND') forgetTrip(id);
-    return t.loadError.code === 'NOT_FOUND' ? (
+    return notFound ? (
       <EmptyState icon={MapPinOff} title="Trip not found" action={<ButtonLink to="/plan">Plan a new trip</ButtonLink>}>
         This link may be old, or the trip was created before the database was connected.
       </EmptyState>

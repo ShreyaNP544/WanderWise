@@ -1,7 +1,7 @@
 import { cn } from '../../lib/cn.js';
 
 /** Photo with a small, unobtrusive attribution link (licences require credit). */
-export function Photo({ photo, className, imgClassName, priority = false, showCredit = true, children }) {
+export function Photo({ photo, className, imgClassName, priority = false, showCredit = true, creditLink = true, children }) {
   // Only default to `relative` when the caller hasn't positioned it (e.g. an absolute background).
   const positioned = /\b(absolute|fixed|sticky)\b/.test(className || '');
   // No real photo of this place: show a neutral branded panel rather than a misleading landscape.
@@ -25,9 +25,15 @@ export function Photo({ photo, className, imgClassName, priority = false, showCr
       {children}
       {showCredit && (
         <figcaption className="absolute bottom-1.5 right-2 z-10 text-[10px] leading-none text-white/75 drop-shadow">
-          <a href={photo.source} target="_blank" rel="noreferrer" className="hover:text-white hover:underline">
-            {photo.credit} · {photo.license}
-          </a>
+          {creditLink ? (
+            <a href={photo.source} target="_blank" rel="noreferrer" className="hover:text-white hover:underline">
+              {photo.credit} · {photo.license}
+            </a>
+          ) : (
+            <span>
+              {photo.credit} · {photo.license}
+            </span>
+          )}
         </figcaption>
       )}
     </figure>

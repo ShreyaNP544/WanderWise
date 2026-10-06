@@ -14,7 +14,7 @@ function limiter(limit, { skipFailedRequests = false } = {}) {
   });
 }
 
-export const apiLimiter = limiter(120);
+export const apiLimiter = limiter(400);
 // AI calls are slow and quota-limited, so they get a much tighter budget.
 // Rejected requests (typos, validation errors) don't count: they never reach Gemma.
 export const aiLimiter = limiter(12, { skipFailedRequests: true });
