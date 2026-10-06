@@ -5,6 +5,9 @@ import { buildConflictPrompt } from './prompts/conflict.js';
 import { buildModifyPrompt } from './prompts/modify.js';
 import { buildPlanPrompt } from './prompts/plan.js';
 
+// Long trips need room for the whole JSON, or it gets cut off mid-object.
+const outputBudget = (days) => Math.min(16384, 3000 + days * 1200);
+
 const dayCountCheck = (days) => (plan) => {
   if (plan.days.length !== days) return `The plan must have exactly ${days} days but has ${plan.days.length}.`;
   const numbers = plan.days.map((d) => d.day).join(',');
@@ -19,6 +22,7 @@ export async function generatePlan({ prefs, grounding, live, feasibility }) {
     schema: PlanSchema,
     check: dayCountCheck(prefs.days),
     temperature: 0.5,
+    maxOutputTokens: outputBudget(prefs.days),
   });
   return { plan: data, meta };
 }
@@ -30,6 +34,7 @@ export async function editPlan(input) {
     schema: ModifiedPlanSchema,
     check: dayCountCheck(input.prefs.days),
     temperature: 0.3,
+    maxOutputTokens: outputBudget(input.prefs.days),
   });
   const { change, ...plan } = data;
   return { plan, change, meta };

@@ -28,10 +28,10 @@ export function LoadingStory({ mode = 'create', title, overlay = false }) {
       {title && <p className="mt-6 font-display text-2xl font-bold">{title}</p>}
       <p className="mt-3 min-h-6 text-lg text-ink">{lines[i]}</p>
       <div className="mt-5 h-1.5 w-56 overflow-hidden rounded-full bg-line" aria-hidden="true">
-        <div className="h-full rounded-full bg-brand-500 transition-all duration-1000" style={{ width: `${Math.min(95, (seconds / 70) * 100)}%` }} />
+        <div className="h-full rounded-full bg-brand-500 transition-all duration-1000" style={{ width: `${Math.min(95, (seconds / 90) * 100)}%` }} />
       </div>
       <p className="mt-3 text-sm text-muted">
-        {seconds < 50 ? 'Gemma usually takes 30–60 seconds.' : 'Still working. Complex trips take a little longer.'}
+        {seconds < 75 ? 'Gemma usually takes 40–90 seconds.' : 'Still working. Longer trips take a little longer.'}
       </p>
     </div>
   );

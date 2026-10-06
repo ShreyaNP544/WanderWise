@@ -44,3 +44,31 @@ Reproduce against a running server: `node scripts/remix-test.js`.
 | "Less tiring" sometimes only shifts a start time | Prompt tightened (day must get lighter: fewer hours, no energy-3) |
 | Model occasionally returns "None." as a warning | Filtered |
 | Latency 35–90 s per call | Mitigated: narrated loading states + 6 h response cache for rehearsed demos |
+
+## QA run (demo readiness)
+Reproduce: `node backend/scripts/qa.js` (API edge cases, needs the server running) and `node backend/scripts/qa-failures.js` (failure modes, no key needed).
+
+| # | Scenario | Result |
+|---|---|---|
+| 1 | Empty inputs / missing body | 400 with every missing field named |
+| 2 | Invalid budget (text, negative) | 400 on `budget` |
+| 3 | Budget below ₹1,000 | 400; feasible-but-tight budgets get honest trade-offs instead |
+| 4 | Budget above ₹10,00,000 | 400 |
+| 5 | Invalid destination ("Qwzxplorvania") | **Fixed:** 400 on `destination` before any Gemma call (was: Gemma planned a fictional trip) |
+| 6–7 | 30-day / 0-day trips | 400 on `days`; long trips get a larger output budget so JSON isn't truncated |
+| 8–9 | Bad API key + local Gemma down | One clean 503 "Gemma is busy" in ~2 s; the sample trip still works |
+| 10 | Malformed model JSON | Fences, trailing commas and prose are recovered; otherwise a repair pass, then fallback model |
+| 11–12 | External API dead or slow | Null within the timeout (~1.5 s); trip planned without it, UI says what's missing |
+| 13 | Network failure (browser) | Friendly "Can't reach the server" with Retry; the plan on screen is never lost |
+| 14 | Duplicate remix | Second request gets 409 BUSY (no race) |
+| 15 | Browser refresh | Trips persist in MongoDB; reload by URL works |
+| 16 | Mobile (390 px) | Layout verified in a 390 px frame; undo available on mobile |
+| 17 | Unexpected input (oversized, malformed JSON, injection-shaped ids, gibberish remix) | 400s; a remix that changes nothing returns NO_CHANGE instead of a fake "updated" version |
+| 18 | Impossible remix | Trade-off cards (verified: "30% cheaper", "travelling with my parents") |
+
+### Bugs found and fixed in this pass
+- Unrelated remixes on an over-budget trip silently cut food/stay ("don't wake me before 8" cut food to ₹200/day). Cost-cutting now only runs when the request changes costs; unrealistic daily food spend is flagged.
+- Gemma sometimes described a change it never made (paragliding "added", hotel "upgraded"). Each request type now has a data-level check, a correction pass, and an honest warning or NO_CHANGE.
+- Rejected requests counted toward the AI rate limit (typos could lock out the demo). Only successful AI calls count now.
+- Client gave up after 120 s while generation + repair can take longer. AI calls now wait up to 240 s, with narrated progress.
+- A stale dev server from an earlier session kept serving old code on port 5000. Documented in DEMO.md: one clean restart before judging.

@@ -8,11 +8,13 @@ export class ApiError extends Error {
   }
 }
 
-const TIMEOUT_MS = 120_000; // Gemma calls can take a while; never hang forever.
+// Gemma calls can take 40–90 s plus a repair or fallback; never hang forever, but don't give up early.
+const TIMEOUT_MS = 30_000;
+const AI_TIMEOUT_MS = 240_000;
 
-async function request(path, { method = 'GET', body, signal } = {}) {
+async function request(path, { method = 'GET', body, signal, ai = false } = {}) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), ai ? AI_TIMEOUT_MS : TIMEOUT_MS);
   signal?.addEventListener('abort', () => controller.abort());
 
   let res;
@@ -51,10 +53,10 @@ async function request(path, { method = 'GET', body, signal } = {}) {
 
 export const api = {
   health: (opts) => request('/health', opts),
-  createTrip: (preferences, opts) => request('/trips', { method: 'POST', body: { preferences }, ...opts }),
+  createTrip: (preferences, opts) => request('/trips', { method: 'POST', body: { preferences }, ai: true, ...opts }),
   demoTrip: () => request('/trips/demo', { method: 'POST', body: {} }),
   getTrip: (id, opts) => request(`/trips/${encodeURIComponent(id)}`, opts),
-  modifyTrip: (id, body, opts) => request(`/trips/${encodeURIComponent(id)}/modify`, { method: 'POST', body, ...opts }),
+  modifyTrip: (id, body, opts) => request(`/trips/${encodeURIComponent(id)}/modify`, { method: 'POST', body, ai: true, ...opts }),
   undoTrip: (id) => request(`/trips/${encodeURIComponent(id)}/undo`, { method: 'POST', body: {} }),
   dismissConflict: (id) => request(`/trips/${encodeURIComponent(id)}/dismiss-conflict`, { method: 'POST', body: {} }),
 };

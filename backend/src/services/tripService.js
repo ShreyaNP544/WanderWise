@@ -13,7 +13,22 @@ import { AppError } from '../middleware/errors.js';
 import { getStore } from '../store/index.js';
 
 const MAX_VERSIONS = 15;
-const ADDITIVE = ['adventure', 'hidden_gem', 'food'];
+
+/**
+ * What the plan DATA must show for each kind of request. Returns a description of
+ * what is missing, or null if the edit is real. Gemma's prose is not evidence.
+ */
+function unmetRequirement(strategies, before, after) {
+  const d = diffPlans(before, after);
+  const touched = [...d.added, ...d.modified].map(({ id }) => after.days.flatMap((x) => x.activities).find((a) => a.id === id)).filter(Boolean);
+  const anyChange = d.added.length || d.modified.length || d.removed.length || d.stay || d.transport || d.food || d.localTransport;
+  if (strategies.includes('adventure') && !touched.some((a) => a.category === 'adventure' || a.energy === 3)) return 'no adventure activity was added';
+  if (strategies.includes('hidden_gem') && !touched.some((a) => a.hiddenGem)) return 'no activity is marked as a hidden gem';
+  if (strategies.includes('stay') && !d.stay) return 'the stay is unchanged';
+  if (strategies.includes('food') && !d.food && !touched.some((a) => a.category === 'food')) return 'no food experience was added';
+  if (!anyChange) return 'nothing in the itinerary, stay, transport or food changed';
+  return null;
+}
 const newId = () => randomBytes(9).toString('base64url');
 const inFlight = new Set(); // one modification per trip at a time
 
@@ -122,6 +137,12 @@ export async function generateTrip(prefs) {
   const grounding = groundingFor(dest, prefs);
   const feasibility = assessFeasibility(prefs, dest);
   const context = await buildContext(prefs, dest);
+  // Don't let Gemma invent a trip to a place that doesn't exist.
+  if (!dest && !context.location) {
+    throw new AppError(400, 'VALIDATION_ERROR', `We couldn't find "${prefs.destination}" in India.`, {
+      details: [{ field: 'destination', message: 'We couldn’t find this place. Try a city, town or region name, e.g. “Coorg, Karnataka”.' }],
+    });
+  }
   const live = contextForPrompt(context);
   addDistanceNote(feasibility, context);
 
@@ -210,7 +231,10 @@ async function runModification(id, { instruction, optionId }) {
 
   // ── Edit the existing plan
   const currentUnderNew = computeBudget(current.plan, nextPrefs);
-  if (currentUnderNew.status === 'over' && !understood.strategies.includes('budget')) understood.strategies.push('budget');
+  // Only add cost-cutting when THIS request changes costs (more people, days, a new cap, stay/transport).
+  // "Don't wake me before 8" must not quietly shrink the food budget.
+  const costRelevant = ['budget', 'travellers', 'days', 'stay', 'transport'].some((k) => k in understood.patch);
+  if (costRelevant && currentUnderNew.status === 'over' && !understood.strategies.includes('budget')) understood.strategies.push('budget');
   if (understood.strategies.length > 1) understood.strategies = understood.strategies.filter((s) => s !== 'general');
 
   const editInput = {
@@ -226,29 +250,39 @@ async function runModification(id, { instruction, optionId }) {
   };
   let edited = await ai.editPlan(editInput);
 
-  // Code referees the claim: "add" requests must really add or change an activity in days[].
-  const additive = understood.strategies.some((s) => ADDITIVE.includes(s));
-  if (additive) {
+  // Code referees the claim: the plan data must actually reflect what was asked,
+  // not just the summary. One correction pass, then an honest warning.
+  const unmet = (plan) => unmetRequirement(understood.strategies, current.plan, plan);
+  const problem = unmet(edited.plan);
+  if (problem) {
+    try {
+      const retry = await ai.editPlan({
+        ...editInput,
+        request: `${instruction}\n(Correction: your previous answer said it made this change, but the plan data did not: ${problem}. Make the change in the JSON itself, not only in change.summary.)`,
+      });
+      if (!unmet(retry.plan)) edited = retry;
+    } catch {
+      /* keep the first answer; the warning below stays honest */
+    }
+    const still = unmet(edited.plan);
     const d = diffPlans(current.plan, edited.plan);
-    if (!d.added.length && !d.modified.length) {
-      try {
-        edited = await ai.editPlan({
-          ...editInput,
-          request: `${instruction}\n(Correction: your previous answer described an addition but did not put any new activity in "days". Add it as a new activity with id "n1" in the right day and time slot.)`,
-        });
-      } catch {
-        /* keep the first answer; the warning below will be honest about it */
-      }
-      const d2 = diffPlans(current.plan, edited.plan);
-      if (!d2.added.length && !d2.modified.length) {
-        edited.change.warnings = [...(edited.change.warnings || []), "Gemma described a new activity but didn't add one to the itinerary. Try rephrasing the request."];
-      }
+    const nothing = !(d.added.length || d.modified.length || d.removed.length || d.stay || d.transport || d.food || d.localTransport);
+    if (still && nothing) {
+      // Don't save an identical "new version" that pretends something happened.
+      throw new AppError(422, 'NO_CHANGE', `Gemma couldn't apply “${instruction}” (${still}). Try naming a day or an activity.`);
+    }
+    if (still) {
+      edited.change.summary = 'No change was made to the plan';
+      edited.change.warnings = [...(edited.change.warnings || []), `Gemma couldn't apply this (${still}). Try rephrasing, e.g. name the day or the activity.`];
     }
   }
 
   const scoped = applyScope(current.plan, edited.plan, understood.scope.days);
   const keep = [...understood.keep, ...understood.keepInterests];
-  const enforced = await enforceBudget({ plan: finalize(scoped.plan, dest, context.places), prefs: nextPrefs, dest, grounding, live, places: context.places, history, keep });
+  const finalPlan = finalize(scoped.plan, dest, context.places);
+  const enforced = understood.strategies.includes('budget')
+    ? await enforceBudget({ plan: finalPlan, prefs: nextPrefs, dest, grounding, live, places: context.places, history, keep })
+    : { plan: finalPlan, budget: computeBudget(finalPlan, nextPrefs), meta: null };
 
   const diff = diffPlans(current.plan, enforced.plan);
   edited.change.warnings = cleanWarnings(edited.change.warnings);

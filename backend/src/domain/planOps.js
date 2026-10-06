@@ -82,6 +82,12 @@ export function constraintWarnings(plan, prefs, { keepInterests = [], interestPa
   const warnings = [];
   const all = plan.days.flatMap((d) => d.activities);
 
+  // Daily spend floors: cutting food to ₹200/day "fits the budget" on paper only.
+  const minFood = dest ? Math.round(dest.foodPerPersonPerDay.budget * 0.7) : 300;
+  if (plan.foodPerPersonPerDay < minFood) {
+    warnings.push(`Food at ₹${plan.foodPerPersonPerDay}/person/day is unrealistically low (plan for at least ₹${minFood}).`);
+  }
+
   // Stay prices vs our dataset: a "mid" room at a budget price is a mislabel, not a bargain.
   if (dest) {
     for (const s of plan.stay) {
