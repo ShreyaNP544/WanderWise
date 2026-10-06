@@ -15,6 +15,7 @@ import { ReshapeBar } from '../components/trip/ReshapeBar.jsx';
 import { TripHeader } from '../components/trip/TripHeader.jsx';
 import { TripSkeleton } from '../components/trip/TripSkeleton.jsx';
 import { useTrip } from '../hooks/useTrip.js';
+import { dayTheme } from '../lib/destinations.js';
 import { forgetTrip } from '../lib/recentTrips.js';
 import { addDays, changeMarks } from '../lib/trip.js';
 
@@ -66,6 +67,7 @@ export default function Trip() {
               weather={weatherByDay[day.day]}
               marks={marks}
               destination={trip.destination.name}
+              theme={dayTheme(day, p.destination, context?.photo)}
             />
           ))}
         </div>

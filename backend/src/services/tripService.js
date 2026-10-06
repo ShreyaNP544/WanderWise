@@ -117,6 +117,7 @@ export function serializeTrip(trip) {
       distanceKm: trip.context.distanceKm,
       places: trip.context.places.map(({ name, description, url }) => ({ name, description, url })),
       weather: trip.context.weather,
+      photo: trip.context.photo || null,
       sources: trip.context.sources,
       fetchedAt: trip.context.fetchedAt,
     },

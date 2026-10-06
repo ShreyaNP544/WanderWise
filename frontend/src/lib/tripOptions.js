@@ -41,8 +41,8 @@ export const DIETS = [
 ];
 
 export const SUGGESTED_DESTINATIONS = [
-  'Manali, Himachal', 'Goa', 'Jaipur', 'Rishikesh', 'Udaipur', 'Munnar, Kerala',
-  'Varanasi', 'Darjeeling', 'Pondicherry', 'Coorg',
+  'Manali, Himachal', 'Goa', 'Jaipur', 'Udaipur', 'Jaisalmer', 'Rishikesh', 'Varanasi', 'Hampi, Karnataka',
+  'Munnar, Kerala', 'Alleppey, Kerala', 'Pondicherry', 'Darjeeling', 'Coorg, Karnataka', 'Leh, Ladakh', 'Shillong', 'Mumbai',
 ];
 
 export const BUDGET_PRESETS = [10000, 20000, 35000, 50000];

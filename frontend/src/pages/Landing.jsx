@@ -8,17 +8,17 @@ import { ButtonLink } from '../components/ui/Button.jsx';
 import { Card } from '../components/ui/Card.jsx';
 import { Photo } from '../components/ui/Photo.jsx';
 import { cn } from '../lib/cn.js';
-import { DESTINATIONS, FALLBACK_PHOTO, HERO_PHOTO, photoFor } from '../lib/destinations.js';
+import { DESTINATIONS, HERO_PHOTO, MOMENTS, THEME_PHOTOS, photoFor } from '../lib/destinations.js';
 
 const byId = Object.fromEntries(DESTINATIONS.map((d) => [d.id, d]));
 const planLink = (d) => `/plan?destination=${encodeURIComponent(`${d.name}, ${d.region}`)}`;
 
 const VIBES = [
   { emoji: '🏔️', title: 'Into the mountains', dest: byId.manali, tint: 'from-sky-900/80' },
-  { emoji: '🏖️', title: 'Sun, sand & seafood', dest: byId.goa, tint: 'from-amber-900/80' },
-  { emoji: '🏰', title: 'Forts & palaces', dest: byId.jaipur, tint: 'from-rose-900/80' },
-  { emoji: '🍃', title: 'Tea-hill slow days', dest: byId.munnar, tint: 'from-emerald-900/80' },
-  { emoji: '🪔', title: 'Ghats & sunrises', dest: byId.varanasi, tint: 'from-orange-900/80' },
+  { emoji: '🍛', title: 'Food trails', dest: byId.jaipur, photo: THEME_PHOTOS.food, tint: 'from-amber-900/80' },
+  { emoji: '🪂', title: 'Thrills & adventure', dest: byId.rishikesh, photo: THEME_PHOTOS.adventure, tint: 'from-sky-900/80' },
+  { emoji: '🪔', title: 'Ghats & rituals', dest: byId.varanasi, photo: THEME_PHOTOS.spiritual, tint: 'from-orange-900/80' },
+  { emoji: '🏰', title: 'Desert forts', dest: byId.jaisalmer, tint: 'from-rose-900/80' },
 ];
 
 const steps = [
@@ -79,9 +79,9 @@ function Hero() {
           </div>
 
           <div className="relative hidden h-90 lg:block" aria-hidden="true">
-            <Polaroid photo={byId.goa.photo} caption="Goa ☀️" tilt="-8deg" className="absolute left-0 top-6 w-56" />
-            <Polaroid photo={byId.jaipur.photo} caption="Jaipur 🏰" tilt="6deg" className="absolute right-4 top-0 w-60 [animation-delay:-2s]" />
-            <Polaroid photo={byId.munnar.photo} caption="Munnar 🍃" tilt="-3deg" className="absolute bottom-0 left-24 w-64 [animation-delay:-4s]" />
+            <Polaroid photo={byId.udaipur.photo} caption="Udaipur 🏰" tilt="-8deg" className="absolute left-0 top-6 w-56" />
+            <Polaroid photo={THEME_PHOTOS.food} caption="Thali time 🍛" tilt="6deg" className="absolute right-4 top-0 w-60 [animation-delay:-2s]" />
+            <Polaroid photo={byId.hampi.photo} caption="Hampi 🌅" tilt="-3deg" className="absolute bottom-0 left-24 w-64 [animation-delay:-4s]" />
           </div>
         </div>
       </div>
@@ -115,7 +115,7 @@ function ContinuePlanning() {
 }
 
 function PhotoMarquee() {
-  const photos = [...DESTINATIONS.map((d) => ({ photo: d.photo, name: d.name, id: d.id })), { photo: FALLBACK_PHOTO, name: 'Kerala', id: 'kerala' }];
+  const photos = MOMENTS.map((m, i) => ({ photo: m.photo, name: m.label, id: `m${i}` }));
   const loop = [...photos, ...photos];
   return (
     <section aria-label="Destination photos" className="overflow-hidden py-10">
@@ -144,7 +144,7 @@ function Vibes() {
         {VIBES.map((v, i) => (
           <li key={v.title} className={i === 0 ? 'col-span-2 md:col-span-1' : ''}>
             <Link to={planLink(v.dest)} className="group block overflow-hidden rounded-3xl shadow-card transition hover:-translate-y-1 hover:rotate-1 hover:shadow-xl">
-              <Photo photo={v.dest.photo} className="aspect-3/4 max-h-80 w-full" imgClassName="transition-transform duration-500 group-hover:scale-110">
+              <Photo photo={v.photo || v.dest.photo} className="aspect-3/4 max-h-80 w-full" imgClassName="transition-transform duration-500 group-hover:scale-110">
                 <div className={cn('absolute inset-0 bg-linear-to-t via-black/10 to-transparent', v.tint)} aria-hidden="true" />
                 <div className="absolute inset-x-0 bottom-0 p-4 pb-5 text-white">
                   <span className="text-3xl" aria-hidden="true">{v.emoji}</span>
@@ -262,7 +262,7 @@ function Pillars() {
         ))}
       </ul>
       <div className="relative mt-14 overflow-hidden rounded-4xl shadow-xl">
-        <Photo photo={byId.udaipur.photo} className="h-64 sm:h-72">
+        <Photo photo={byId.goa.photo} className="h-64 sm:h-72">
           <div className="absolute inset-0 bg-linear-to-r from-black/70 to-black/10" aria-hidden="true" />
           <div className="absolute inset-0 flex flex-col items-start justify-center gap-4 px-6 text-white sm:px-12">
             <p className="flex items-center gap-2 text-sm font-semibold text-white/85">

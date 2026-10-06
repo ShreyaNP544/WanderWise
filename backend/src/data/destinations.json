@@ -1068,6 +1068,502 @@
         "Homestays below the Mall instead of heritage hotels",
         "Momos and thukpa at local joints"
       ]
+    },
+    {
+      "id": "jaisalmer",
+      "name": "Jaisalmer",
+      "state": "Rajasthan",
+      "lat": 26.9157,
+      "lon": 70.9083,
+      "aliases": [
+        "jaisalmer",
+        "golden city",
+        "sam dunes",
+        "thar desert"
+      ],
+      "tags": [
+        "culture",
+        "adventure",
+        "photography",
+        "desert"
+      ],
+      "bestMonths": "Oct–Mar; very hot Apr–Jun",
+      "gateway": "Jaisalmer railway station; Jodhpur (5 h by bus) for more flights.",
+      "access": {
+        "delhi": [
+          {
+            "mode": "train",
+            "hours": 18,
+            "cost": 550,
+            "note": "Sleeper; 3AC ≈ ₹1,450"
+          },
+          {
+            "mode": "flight",
+            "hours": 7,
+            "cost": 6000,
+            "note": "Fly to Jodhpur + bus"
+          }
+        ],
+        "mumbai": [
+          {
+            "mode": "train",
+            "hours": 20,
+            "cost": 650,
+            "note": "Sleeper via Jodhpur; 3AC ≈ ₹1,700"
+          },
+          {
+            "mode": "flight",
+            "hours": 7,
+            "cost": 5200,
+            "note": "Fly to Jodhpur + bus"
+          }
+        ],
+        "bengaluru": [
+          {
+            "mode": "flight",
+            "hours": 8,
+            "cost": 6900,
+            "note": "Fly to Jodhpur + bus"
+          }
+        ]
+      },
+      "stayPerNight": {
+        "budget": 900,
+        "mid": 2800,
+        "premium": 8000
+      },
+      "hostelBedPerNight": 450,
+      "foodPerPersonPerDay": {
+        "budget": 400,
+        "mid": 900,
+        "premium": 2000
+      },
+      "localTransportPerPersonPerDay": 250,
+      "attractions": [
+        {
+          "name": "Jaisalmer Fort (Sonar Qila)",
+          "category": "culture",
+          "cost": 0,
+          "hours": 3,
+          "energy": 2,
+          "note": "Fort palace museum ticket extra"
+        },
+        {
+          "name": "Patwon ki Haveli",
+          "category": "culture",
+          "cost": 100,
+          "hours": 1.5,
+          "energy": 1
+        },
+        {
+          "name": "Gadisar Lake",
+          "category": "nature",
+          "cost": 0,
+          "hours": 1.5,
+          "energy": 1,
+          "note": "Boating about ₹100"
+        },
+        {
+          "name": "Sam Sand Dunes camel safari & sunset",
+          "category": "adventure",
+          "cost": 1500,
+          "hours": 5,
+          "energy": 2,
+          "note": "Usually includes camp dinner"
+        },
+        {
+          "name": "Kuldhara abandoned village",
+          "category": "culture",
+          "cost": 100,
+          "hours": 1.5,
+          "energy": 1
+        },
+        {
+          "name": "Bada Bagh cenotaphs",
+          "category": "culture",
+          "cost": 100,
+          "hours": 1,
+          "energy": 1
+        },
+        {
+          "name": "Salim Singh ki Haveli",
+          "category": "culture",
+          "cost": 50,
+          "hours": 1,
+          "energy": 1
+        }
+      ],
+      "savingsLevers": [
+        "Guesthouses inside or below the fort instead of desert resorts",
+        "Shared jeeps to Sam instead of a private car",
+        "Sunset at the dunes without an overnight luxury camp"
+      ]
+    },
+    {
+      "id": "hampi",
+      "name": "Hampi",
+      "state": "Karnataka",
+      "lat": 15.335,
+      "lon": 76.46,
+      "aliases": [
+        "hampi",
+        "hospet",
+        "hosapete",
+        "vijayanagara",
+        "anegundi"
+      ],
+      "tags": [
+        "culture",
+        "photography",
+        "adventure",
+        "history"
+      ],
+      "bestMonths": "Oct–Feb",
+      "gateway": "Hosapete (Hospet) Junction, 13 km away; overnight train from Bengaluru.",
+      "access": {
+        "bengaluru": [
+          {
+            "mode": "train",
+            "hours": 9,
+            "cost": 300,
+            "note": "Overnight Hampi Express sleeper; 3AC ≈ ₹800"
+          },
+          {
+            "mode": "bus",
+            "hours": 8,
+            "cost": 700
+          }
+        ],
+        "mumbai": [
+          {
+            "mode": "train",
+            "hours": 16,
+            "cost": 500,
+            "note": "Sleeper to Hosapete; 3AC ≈ ₹1,300"
+          }
+        ],
+        "delhi": [
+          {
+            "mode": "flight",
+            "hours": 13,
+            "cost": 5800,
+            "note": "Fly to Bengaluru + overnight train"
+          }
+        ]
+      },
+      "stayPerNight": {
+        "budget": 900,
+        "mid": 2500,
+        "premium": 7000
+      },
+      "hostelBedPerNight": 450,
+      "foodPerPersonPerDay": {
+        "budget": 350,
+        "mid": 800,
+        "premium": 1800
+      },
+      "localTransportPerPersonPerDay": 300,
+      "attractions": [
+        {
+          "name": "Virupaksha Temple",
+          "category": "spiritual",
+          "cost": 0,
+          "hours": 1.5,
+          "energy": 1
+        },
+        {
+          "name": "Vittala Temple & Stone Chariot",
+          "category": "culture",
+          "cost": 40,
+          "hours": 2.5,
+          "energy": 2
+        },
+        {
+          "name": "Hemakuta Hill sunset",
+          "category": "nature",
+          "cost": 0,
+          "hours": 1.5,
+          "energy": 2
+        },
+        {
+          "name": "Matanga Hill sunrise",
+          "category": "nature",
+          "cost": 0,
+          "hours": 2.5,
+          "energy": 3
+        },
+        {
+          "name": "Coracle ride on the Tungabhadra",
+          "category": "adventure",
+          "cost": 300,
+          "hours": 1,
+          "energy": 1
+        },
+        {
+          "name": "Lotus Mahal & Elephant Stables",
+          "category": "culture",
+          "cost": 40,
+          "hours": 1.5,
+          "energy": 1
+        },
+        {
+          "name": "Hampi Bazaar",
+          "category": "shopping",
+          "cost": 0,
+          "hours": 1,
+          "energy": 1
+        },
+        {
+          "name": "Anegundi village",
+          "category": "culture",
+          "cost": 50,
+          "hours": 3,
+          "energy": 2
+        }
+      ],
+      "savingsLevers": [
+        "Rent a scooter (about ₹300/day) instead of autos",
+        "Guesthouses on the Hampi Island side",
+        "Overnight train saves a night of stay"
+      ]
+    },
+    {
+      "id": "pondicherry",
+      "name": "Pondicherry",
+      "state": "Puducherry",
+      "lat": 11.9416,
+      "lon": 79.8083,
+      "aliases": [
+        "pondicherry",
+        "puducherry",
+        "pondy",
+        "auroville"
+      ],
+      "tags": [
+        "beaches",
+        "culture",
+        "food",
+        "spiritual"
+      ],
+      "bestMonths": "Oct–Mar",
+      "gateway": "Puducherry station (limited trains); most travellers come via Chennai, 3 h by bus.",
+      "access": {
+        "bengaluru": [
+          {
+            "mode": "bus",
+            "hours": 7.5,
+            "cost": 800
+          }
+        ],
+        "mumbai": [
+          {
+            "mode": "flight",
+            "hours": 6,
+            "cost": 4800,
+            "note": "Fly to Chennai + bus"
+          }
+        ],
+        "delhi": [
+          {
+            "mode": "flight",
+            "hours": 7,
+            "cost": 5800,
+            "note": "Fly to Chennai + bus"
+          }
+        ]
+      },
+      "stayPerNight": {
+        "budget": 1200,
+        "mid": 3000,
+        "premium": 8000
+      },
+      "hostelBedPerNight": 600,
+      "foodPerPersonPerDay": {
+        "budget": 500,
+        "mid": 1000,
+        "premium": 2200
+      },
+      "localTransportPerPersonPerDay": 300,
+      "attractions": [
+        {
+          "name": "French Quarter (White Town) walk",
+          "category": "culture",
+          "cost": 0,
+          "hours": 2,
+          "energy": 1
+        },
+        {
+          "name": "Promenade Beach",
+          "category": "nature",
+          "cost": 0,
+          "hours": 1.5,
+          "energy": 1
+        },
+        {
+          "name": "Auroville & Matrimandir viewpoint",
+          "category": "spiritual",
+          "cost": 0,
+          "hours": 3,
+          "energy": 1,
+          "note": "Inner chamber visits need advance booking"
+        },
+        {
+          "name": "Paradise Beach (Chunnambar boat)",
+          "category": "nature",
+          "cost": 300,
+          "hours": 4,
+          "energy": 1
+        },
+        {
+          "name": "Sri Aurobindo Ashram",
+          "category": "spiritual",
+          "cost": 0,
+          "hours": 1,
+          "energy": 1
+        },
+        {
+          "name": "Serenity Beach",
+          "category": "nature",
+          "cost": 0,
+          "hours": 2,
+          "energy": 1,
+          "note": "Surf lessons about ₹1,500"
+        },
+        {
+          "name": "Basilica of the Sacred Heart",
+          "category": "culture",
+          "cost": 0,
+          "hours": 0.5,
+          "energy": 1
+        }
+      ],
+      "savingsLevers": [
+        "Rent a cycle or scooter instead of autos",
+        "Hostels in Auroville or the Tamil quarter",
+        "Tamil meals instead of French cafés"
+      ]
+    },
+    {
+      "id": "alleppey",
+      "name": "Alleppey",
+      "state": "Kerala",
+      "lat": 9.4981,
+      "lon": 76.3388,
+      "aliases": [
+        "alleppey",
+        "alappuzha",
+        "kerala backwaters",
+        "backwaters",
+        "kumarakom"
+      ],
+      "tags": [
+        "nature",
+        "food",
+        "photography"
+      ],
+      "bestMonths": "Sep–Mar",
+      "gateway": "Alappuzha railway station; Kochi airport 1.5 h away.",
+      "access": {
+        "bengaluru": [
+          {
+            "mode": "train",
+            "hours": 12,
+            "cost": 450,
+            "note": "Sleeper; 3AC ≈ ₹1,200"
+          },
+          {
+            "mode": "bus",
+            "hours": 11,
+            "cost": 1100
+          }
+        ],
+        "mumbai": [
+          {
+            "mode": "flight",
+            "hours": 4,
+            "cost": 4900,
+            "note": "Fly to Kochi + bus"
+          }
+        ],
+        "delhi": [
+          {
+            "mode": "flight",
+            "hours": 5,
+            "cost": 6900,
+            "note": "Fly to Kochi + bus"
+          }
+        ]
+      },
+      "stayPerNight": {
+        "budget": 1200,
+        "mid": 3000,
+        "premium": 8000
+      },
+      "hostelBedPerNight": 600,
+      "foodPerPersonPerDay": {
+        "budget": 450,
+        "mid": 900,
+        "premium": 1800
+      },
+      "localTransportPerPersonPerDay": 300,
+      "attractions": [
+        {
+          "name": "Shikara canoe ride through the backwaters",
+          "category": "nature",
+          "cost": 400,
+          "hours": 2,
+          "energy": 1
+        },
+        {
+          "name": "Overnight houseboat",
+          "category": "nature",
+          "cost": 5000,
+          "hours": 20,
+          "energy": 1,
+          "note": "Per person when 2 share; includes meals"
+        },
+        {
+          "name": "Village canal kayaking",
+          "category": "adventure",
+          "cost": 800,
+          "hours": 3,
+          "energy": 2
+        },
+        {
+          "name": "Alappuzha Beach",
+          "category": "nature",
+          "cost": 0,
+          "hours": 1.5,
+          "energy": 1
+        },
+        {
+          "name": "Marari Beach",
+          "category": "nature",
+          "cost": 0,
+          "hours": 3,
+          "energy": 1
+        },
+        {
+          "name": "Kerala sadya lunch",
+          "category": "food",
+          "cost": 250,
+          "hours": 1,
+          "energy": 1
+        },
+        {
+          "name": "State ferry Alappuzha to Kottayam",
+          "category": "nature",
+          "cost": 30,
+          "hours": 2.5,
+          "energy": 1,
+          "note": "Scenic and very cheap; check timings"
+        }
+      ],
+      "savingsLevers": [
+        "Shikara or the state ferry instead of a private houseboat",
+        "Homestays on the canals",
+        "Local meals instead of resort food"
+      ]
     }
   ]
 }

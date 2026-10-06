@@ -2,6 +2,7 @@ import { CalendarDays, Gauge, MapPin, Users, Wallet } from 'lucide-react';
 import { Card } from '../ui/Card.jsx';
 import { Photo } from '../ui/Photo.jsx';
 import { FALLBACK_PHOTO, matchDestination } from '../../lib/destinations.js';
+import { usePlacePhoto } from '../../hooks/usePlacePhoto.js';
 import { formatINR, plural } from '../../lib/format.js';
 import { PACES, TRAVELLER_TYPES } from '../../lib/tripOptions.js';
 
@@ -23,9 +24,10 @@ function Row({ Icon, label, children }) {
 export function TripSummary({ prefs }) {
   const route = [prefs.origin, prefs.destination].map((s) => s.trim()).filter(Boolean);
   const match = matchDestination(prefs.destination);
+  const live = usePlacePhoto(prefs.destination);
   return (
     <Card as="aside" className="overflow-hidden" aria-label="Trip summary">
-      <Photo key={match?.id || 'fallback'} photo={match?.photo || FALLBACK_PHOTO} className="aspect-video">
+      <Photo key={match?.id || live?.src || 'fallback'} photo={match?.photo || live || FALLBACK_PHOTO} className="aspect-video">
         <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent" aria-hidden="true" />
         <p className="absolute bottom-3 left-4 font-display text-2xl font-bold text-white">
           {match ? match.name : prefs.destination.trim() || 'Somewhere new'}

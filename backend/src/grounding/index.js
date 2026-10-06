@@ -1,6 +1,7 @@
 // Real-world context for a trip: location, nearby real places, weather.
 // Every source is optional, fetched in parallel with short timeouts, and labelled with provenance.
 import { distanceKm, geocode } from './geo.js';
+import { placePhoto } from './photo.js';
 import { nearbyPlaces } from './places.js';
 import { forecastForTrip } from './weather.js';
 
@@ -9,9 +10,10 @@ export async function buildContext(prefs, curated) {
   const known = curated && { name: curated.name, region: curated.state, district: '', lat: curated.lat, lon: curated.lon, elevationM: null };
   const [destination, origin] = await Promise.all([geocode(prefs.destination, known), geocode(prefs.origin)]);
 
-  const [places, weather] = await Promise.all([
+  const [places, weather, photo] = await Promise.all([
     nearbyPlaces(destination),
     forecastForTrip(destination, prefs.startDate, prefs.days),
+    curated ? null : placePhoto(destination ? `${destination.name}` : prefs.destination),
   ]);
 
   const context = {
@@ -21,6 +23,7 @@ export async function buildContext(prefs, curated) {
     distanceKm: distanceKm(origin, destination),
     places,
     weather,
+    photo,
     sources: [
       destination && 'Open-Meteo Geocoding',
       places.length && 'Wikipedia',
