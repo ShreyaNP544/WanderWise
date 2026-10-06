@@ -12,7 +12,10 @@ function buildProviders() {
   const hosted = { apiKey, thinking: config.ai.thinking, timeoutMs: config.ai.hostedTimeoutMs };
   if (apiKey) {
     providers.push(aiStudioProvider({ ...hosted, model }));
-    if (fallbackModel && fallbackModel !== model) providers.push(aiStudioProvider({ ...hosted, model: fallbackModel }));
+    // The dense 31B fallback is ~2x slower than the 26B MoE, so it gets a longer timeout.
+    if (fallbackModel && fallbackModel !== model) {
+      providers.push(aiStudioProvider({ ...hosted, model: fallbackModel, timeoutMs: Math.round(config.ai.hostedTimeoutMs * 1.8) }));
+    }
   }
   if (config.ollama.enabled) {
     providers.push(ollamaProvider({ url: config.ollama.url, model: config.ollama.model, timeoutMs: config.ai.localTimeoutMs }));
@@ -66,6 +69,20 @@ function validate(raw, schema, check) {
   return { ok: true, data: result.data };
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/** One quick retry on transient upstream errors (Google returns sporadic 500/503s) before falling back. */
+async function completeWithRetry(provider, args, task) {
+  try {
+    return await provider.complete(args);
+  } catch (err) {
+    if (err.kind !== 'unavailable' && err.kind !== 'network') throw err;
+    log({ task, provider: provider.name, model: provider.model, outcome: 'retrying', kind: err.kind });
+    await sleep(1500);
+    return provider.complete(args);
+  }
+}
+
 const repairPrompt = (prompt, error, previous) =>
   `${prompt}
 
@@ -100,7 +117,7 @@ export async function generateJSON({ task, prompt, schema, check, temperature = 
     const started = Date.now();
     let repaired = false;
     try {
-      let { text, tokens } = await provider.complete({ prompt, temperature, maxOutputTokens });
+      let { text, tokens } = await completeWithRetry(provider, { prompt, temperature, maxOutputTokens }, task);
       let result = validate(text, schema, check);
 
       if (!result.ok) {

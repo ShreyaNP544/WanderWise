@@ -28,20 +28,32 @@ export function deriveDayEnergy(plan) {
 
 /**
  * Provenance is decided by code, never claimed by the model:
- * an activity is "baseline" only if it matches an attraction in our dataset.
+ * "baseline" = matches our curated dataset (place + typical cost);
+ * "real_place" = matches a real place from Wikipedia near the destination (place exists; cost is an estimate);
+ * otherwise "ai_estimate".
  */
-export function annotateProvenance(plan, dest) {
+export function annotateProvenance(plan, dest, places = []) {
+  const placeDest = { attractions: places.map((p) => ({ name: p.name, url: p.url })) };
   for (const day of plan.days) {
     for (const a of day.activities) {
-      const match = a.category === 'transport' ? null : matchAttraction(dest, a);
-      a.source = match ? 'baseline' : 'ai_estimate';
-      if (match) {
-        a.baselineName = match.name;
-        a.baselineCost = match.cost;
-        if (match.note) a.note = match.note;
+      for (const k of ['baselineName', 'baselineCost', 'placeName', 'placeUrl']) delete a[k];
+      if (a.category === 'transport') {
+        a.source = 'ai_estimate';
+        continue;
+      }
+      const curated = matchAttraction(dest, a);
+      const real = places.length ? matchAttraction(placeDest, a) : null;
+      if (real) {
+        a.placeName = real.name;
+        a.placeUrl = real.url;
+      }
+      if (curated) {
+        a.source = 'baseline';
+        a.baselineName = curated.name;
+        a.baselineCost = curated.cost;
+        if (curated.note) a.note = curated.note;
       } else {
-        delete a.baselineName;
-        delete a.baselineCost;
+        a.source = real ? 'real_place' : 'ai_estimate';
       }
     }
   }

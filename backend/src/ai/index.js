@@ -12,10 +12,10 @@ const dayCountCheck = (days) => (plan) => {
   return numbers === expected ? null : `Days must be numbered ${expected} in order (got ${numbers}).`;
 };
 
-export async function generatePlan({ prefs, grounding, feasibility }) {
+export async function generatePlan({ prefs, grounding, live, feasibility }) {
   const { data, meta } = await generateJSON({
     task: 'plan',
-    prompt: buildPlanPrompt({ prefs, grounding, feasibility }),
+    prompt: buildPlanPrompt({ prefs, grounding, live, feasibility }),
     schema: PlanSchema,
     check: dayCountCheck(prefs.days),
     temperature: 0.5,

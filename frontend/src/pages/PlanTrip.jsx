@@ -9,6 +9,7 @@ import { StepStyle } from '../components/plan/StepStyle.jsx';
 import { StepWho } from '../components/plan/StepWho.jsx';
 import { StepWhere } from '../components/plan/StepWhere.jsx';
 import { TripSummary } from '../components/plan/TripSummary.jsx';
+import { LoadingStory } from '../components/trip/LoadingStory.jsx';
 import { useTripForm } from '../hooks/useTripForm.js';
 import { STEPS } from '../lib/preferences.js';
 
@@ -89,6 +90,7 @@ export default function PlanTrip() {
           <TripSummary prefs={form.prefs} />
         </div>
       </div>
+      {submitting && <LoadingStory mode="create" title={`Designing your ${form.prefs.destination.split(',')[0]} trip`} overlay />}
     </div>
   );
 }

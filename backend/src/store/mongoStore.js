@@ -10,6 +10,7 @@ const tripSchema = new mongoose.Schema(
     versions: { type: [mongoose.Schema.Types.Mixed], required: true },
     history: { type: [mongoose.Schema.Types.Mixed], default: [] },
     pendingConflict: { type: mongoose.Schema.Types.Mixed, default: null },
+    context: { type: mongoose.Schema.Types.Mixed, default: null },
   },
   { versionKey: false, timestamps: { createdAt: false, updatedAt: true }, minimize: false }
 );

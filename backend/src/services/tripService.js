@@ -1,6 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import * as ai from '../ai/index.js';
 import { inr } from '../ai/prompts/shared.js';
+import { buildContext, contextForPrompt } from '../grounding/index.js';
 import { computeBudget } from '../domain/budget.js';
 import { findDestination, groundingFor } from '../domain/destinations.js';
 import { diffPlans } from '../domain/diff.js';
@@ -14,14 +15,14 @@ const MAX_VERSIONS = 15;
 const newId = () => randomBytes(9).toString('base64url');
 const inFlight = new Set(); // one modification per trip at a time
 
-function finalize(plan, dest) {
-  return deriveDayEnergy(annotateProvenance(normalizeIds(plan), dest));
+function finalize(plan, dest, places) {
+  return deriveDayEnergy(annotateProvenance(normalizeIds(plan), dest, places));
 }
 
 const budgetUnderstanding = { patch: {}, scope: { days: null }, strategies: ['budget'], keep: [], keepInterests: [], assumptions: [] };
 
 /** If code finds the plan over budget, ask Gemma for one targeted saving pass. Keeps the better result. */
-async function enforceBudget({ plan, prefs, dest, grounding, history, keep = [] }) {
+async function enforceBudget({ plan, prefs, dest, grounding, live, places, history, keep = [] }) {
   const budget = computeBudget(plan, prefs);
   if (budget.status === 'within') return { plan, budget, meta: null };
   try {
@@ -30,12 +31,13 @@ async function enforceBudget({ plan, prefs, dest, grounding, history, keep = [] 
       prefs,
       previousPrefs: prefs,
       grounding,
+      live,
       request: `The plan is ${inr(budget.total - budget.cap)} over the ${inr(budget.cap)} budget. Bring it under budget by cutting the lowest-priority spending.`,
       understood: { ...budgetUnderstanding, keep },
       budget: { current: budget.total, cap: budget.cap, needed: Math.round(budget.total - budget.cap * 0.92) },
       history,
     });
-    const fixedPlan = finalize(fixed.plan, dest);
+    const fixedPlan = finalize(fixed.plan, dest, places);
     const fixedBudget = computeBudget(fixedPlan, prefs);
     if (fixedBudget.total < budget.total) return { plan: fixedPlan, budget: fixedBudget, meta: fixed.meta };
   } catch (err) {
@@ -91,7 +93,22 @@ export function serializeTrip(trip) {
     versionCount: trip.versions.length,
     history: trip.history,
     pendingConflict: trip.pendingConflict,
+    context: trip.context && {
+      location: trip.context.location,
+      distanceKm: trip.context.distanceKm,
+      places: trip.context.places.map(({ name, description, url }) => ({ name, description, url })),
+      weather: trip.context.weather,
+      sources: trip.context.sources,
+      fetchedAt: trip.context.fetchedAt,
+    },
   };
+}
+
+/** Without curated route data, straight-line distance still gives Gemma (and the user) a reality check. */
+function addDistanceNote(feasibility, context) {
+  if (context?.distanceKm && !feasibility.routeKnown) {
+    feasibility.notes = [...(feasibility.notes || []), `About ${context.distanceKm.toLocaleString('en-IN')} km in a straight line from the origin; road or rail is usually 30–50% longer.`];
+  }
 }
 
 // ─────────────────────────────── Generate ───────────────────────────────
@@ -100,9 +117,12 @@ export async function generateTrip(prefs) {
   const dest = findDestination(prefs.destination);
   const grounding = groundingFor(dest, prefs);
   const feasibility = assessFeasibility(prefs, dest);
+  const context = await buildContext(prefs, dest);
+  const live = contextForPrompt(context);
+  addDistanceNote(feasibility, context);
 
-  const first = await ai.generatePlan({ prefs, grounding, feasibility });
-  const enforced = await enforceBudget({ plan: finalize(first.plan, dest), prefs, dest, grounding, history: [] });
+  const first = await ai.generatePlan({ prefs, grounding, live, feasibility });
+  const enforced = await enforceBudget({ plan: finalize(first.plan, dest, context.places), prefs, dest, grounding, live, places: context.places, history: [] });
 
   const warnings = [
     ...overBudgetWarning(enforced.budget, feasibility),
@@ -117,6 +137,7 @@ export async function generateTrip(prefs) {
     current: 0,
     history: [],
     pendingConflict: null,
+    context,
   };
   await getStore().save(trip);
   return serializeTrip(trip);
@@ -161,6 +182,10 @@ async function runModification(id, { instruction, optionId }) {
   const grounding = groundingFor(dest, nextPrefs);
   const feasibility = assessFeasibility(nextPrefs, dest);
   const history = trip.history.slice(-3).map((h) => h.instruction);
+  if (!trip.context) trip.context = await buildContext(nextPrefs, dest);
+  const { context } = trip;
+  const live = contextForPrompt(context);
+  addDistanceNote(feasibility, context);
 
   // ── Conflict: impossible as stated → offer trade-offs instead of a fake plan
   if (feasibility.known && !feasibility.feasible && !option) {
@@ -189,6 +214,7 @@ async function runModification(id, { instruction, optionId }) {
     prefs: nextPrefs,
     previousPrefs: prefs,
     grounding,
+    live,
     request: instruction,
     understood,
     budget: { current: currentUnderNew.total, cap: nextPrefs.budget, needed: Math.max(0, Math.round(currentUnderNew.total - nextPrefs.budget * 0.92)) },
@@ -197,7 +223,7 @@ async function runModification(id, { instruction, optionId }) {
 
   const scoped = applyScope(current.plan, edited.plan, understood.scope.days);
   const keep = [...understood.keep, ...understood.keepInterests];
-  const enforced = await enforceBudget({ plan: finalize(scoped.plan, dest), prefs: nextPrefs, dest, grounding, history, keep });
+  const enforced = await enforceBudget({ plan: finalize(scoped.plan, dest, context.places), prefs: nextPrefs, dest, grounding, live, places: context.places, history, keep });
 
   const diff = diffPlans(current.plan, enforced.plan);
   edited.change.warnings = cleanWarnings(edited.change.warnings);

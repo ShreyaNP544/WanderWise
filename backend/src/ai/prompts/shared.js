@@ -90,6 +90,16 @@ No curated data for this destination. Everything you suggest is an estimate: use
   return `<baseline_data>\n${JSON.stringify(grounding)}\n</baseline_data>`;
 }
 
+export function liveDataBlock(live) {
+  if (!live || !Object.keys(live).length) return '';
+  return `<live_data source="Open-Meteo, Wikipedia; fetched just now">
+${JSON.stringify(live)}
+</live_data>
+- "realPlacesNearby" are real places with Wikipedia articles near the destination. Prefer them (use their exact names) over places you are unsure exist.
+- Use "weatherForecast" only as given: move outdoor or strenuous activities away from days with a high chance of rain. If there is no forecast, never state weather as fact.
+- Use "straightLineDistanceFromOriginKm" to sanity-check travel time when no route data is given (road/rail is usually 1.3–1.5× the straight line).`;
+}
+
 export function feasibilityBlock(feas, budget) {
   if (!feas?.known) return '';
   const lines = [`- Cheapest realistic total for this group ≈ ${inr(feas.floor)} (budget ${inr(budget)}).`];

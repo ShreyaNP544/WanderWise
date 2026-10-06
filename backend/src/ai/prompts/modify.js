@@ -1,5 +1,5 @@
 import {
-  baselineBlock, COST_RULES, HONESTY_RULES, inr, JSON_ONLY, PLAN_JSON_SHAPE, PLAN_RULES, preferencesBlock,
+  baselineBlock, COST_RULES, HONESTY_RULES, inr, JSON_ONLY, liveDataBlock, PLAN_JSON_SHAPE, PLAN_RULES, preferencesBlock,
   PRIORITY_ORDER, ROLE,
 } from './shared.js';
 
@@ -64,7 +64,7 @@ const CHANGE_SHAPE = `"change": {
     "warnings": ["anything you could NOT satisfy, honestly stated"]
   }`;
 
-export function buildModifyPrompt({ plan, prefs, previousPrefs, grounding, request, understood, budget, history }) {
+export function buildModifyPrompt({ plan, prefs, previousPrefs, grounding, live, request, understood, budget, history }) {
   const changed = Object.entries(understood.patch)
     .filter(([k]) => JSON.stringify(previousPrefs[k]) !== JSON.stringify(prefs[k]))
     .map(([k]) => `- ${k}: ${JSON.stringify(previousPrefs[k])} → ${JSON.stringify(prefs[k])}`);
@@ -90,6 +90,7 @@ Scope: ${scopeText}
 Must keep represented: ${mustKeep.join(', ') || 'nothing specific'}
 ${understood.assumptions.map((a) => `Assumption: ${a}`).join('\n')}`,
     baselineBlock(grounding),
+    liveDataBlock(live),
     ...strategyBlocks,
     `## Editing rules
 - Return the FULL updated plan with exactly ${prefs.days} days.
