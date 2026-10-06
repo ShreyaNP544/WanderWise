@@ -16,7 +16,7 @@ export function ReshapeBar({ onSubmit, onUndo, canUndo, busy }) {
   return (
     <div className="sticky bottom-0 z-20 border-t border-line/70 bg-paper/90 backdrop-blur">
       <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6">
-        <ul className="mb-2 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]" aria-label="Suggestions">
+        <ul className="mb-2 flex gap-2 overflow-x-auto pb-1 scrollbar-none" aria-label="Suggestions">
           {RESHAPE_SUGGESTIONS.map((s) => (
             <li key={s} className="shrink-0">
               <button
@@ -56,8 +56,9 @@ export function ReshapeBar({ onSubmit, onUndo, canUndo, busy }) {
             <ArrowUp className="size-5" aria-hidden="true" />
           </Button>
           {canUndo && (
-            <Button variant="secondary" size="lg" className="hidden sm:inline-flex" onClick={onUndo} disabled={busy}>
-              <Undo2 className="size-4" aria-hidden="true" /> Undo
+            <Button variant="secondary" size="lg" className="size-13 px-0! sm:w-auto sm:px-5!" onClick={onUndo} disabled={busy} aria-label="Undo last change">
+              <Undo2 className="size-4" aria-hidden="true" />
+              <span className="hidden sm:inline">Undo</span>
             </Button>
           )}
         </form>

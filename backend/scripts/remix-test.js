@@ -20,7 +20,7 @@ const { body: demo } = await post('/trips/demo', {});
 let trip = demo.trip;
 console.log(`Demo trip ${trip.id}: "${trip.version.plan.title}" ₹${trip.version.budget.total}/${trip.version.budget.cap}`);
 
-for (const instruction of REQUESTS) {
+for (const instruction of REQUESTS.slice(Number(process.argv[3] || 0))) {
   const r = await post(`/trips/${trip.id}/modify`, { instruction });
   if (r.status !== 200) {
     console.log(`\n✗ "${instruction}" → HTTP ${r.status} ${r.body.error?.code}: ${r.body.error?.message} (${r.secs}s)`);

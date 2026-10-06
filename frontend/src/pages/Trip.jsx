@@ -15,6 +15,7 @@ import { ReshapeBar } from '../components/trip/ReshapeBar.jsx';
 import { TripHeader } from '../components/trip/TripHeader.jsx';
 import { TripSkeleton } from '../components/trip/TripSkeleton.jsx';
 import { useTrip } from '../hooks/useTrip.js';
+import { forgetTrip } from '../lib/recentTrips.js';
 import { addDays, changeMarks } from '../lib/trip.js';
 
 export default function Trip() {
@@ -24,6 +25,7 @@ export default function Trip() {
   const marks = useMemo(() => (t.showChange ? changeMarks(trip?.version.diff) : {}), [t.showChange, trip]);
 
   if (t.loadError) {
+    if (t.loadError.code === 'NOT_FOUND') forgetTrip(id);
     return t.loadError.code === 'NOT_FOUND' ? (
       <EmptyState icon={MapPinOff} title="Trip not found" action={<ButtonLink to="/plan">Plan a new trip</ButtonLink>}>
         This link may be old, or the trip was created before the database was connected.

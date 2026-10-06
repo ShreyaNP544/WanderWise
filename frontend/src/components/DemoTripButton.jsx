@@ -25,7 +25,7 @@ export function DemoTripButton({ className, children = 'See a sample trip' }) {
   }
 
   return (
-    <button type="button" onClick={open} disabled={loading} aria-busy={loading || undefined} className={cn('inline-flex items-center gap-2 disabled:opacity-60', className)}>
+    <button type="button" onClick={open} disabled={loading} aria-busy={loading || undefined} className={cn('items-center gap-2 disabled:opacity-60', className)}>
       {loading ? <Spinner className="size-4" /> : <PlayCircle className="size-5" aria-hidden="true" />}
       {children}
     </button>

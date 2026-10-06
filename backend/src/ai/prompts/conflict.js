@@ -10,7 +10,7 @@ Explain the conflict in one plain sentence and offer 2 or 3 options. Each option
     preferencesBlock(prefs),
     request ? `<user_request>\n${request}\n</user_request>` : '',
     `## Computed by the system (trust these numbers)
-- Budget cap: ${inr(prefs.budget)}
+- Budget cap the traveller is now asking for: ${inr(prefs.budget)} (any percentage or "cheaper" in the request has ALREADY been applied to get this number; do not apply it again)
 - Cheapest realistic total for ${prefs.travellers} travellers × ${prefs.days} days ≈ ${inr(feasibility.floor)}
 - Shortfall ≈ ${inr(feasibility.shortfall)}
 ${currentTotal ? `- Current plan total: ${inr(currentTotal)}` : ''}`,

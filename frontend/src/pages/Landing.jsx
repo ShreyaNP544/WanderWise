@@ -69,7 +69,7 @@ function Hero() {
               <ButtonLink to="/plan" variant="accent" size="lg">
                 Plan my trip <ArrowRight className="size-5" aria-hidden="true" />
               </ButtonLink>
-              <DemoTripButton className="h-13 rounded-full bg-white/15 px-6 font-semibold text-white ring-1 ring-white/40 backdrop-blur hover:bg-white/25" />
+              <DemoTripButton className="inline-flex h-13 rounded-full bg-white/15 px-6 font-semibold text-white ring-1 ring-white/40 backdrop-blur hover:bg-white/25" />
             </div>
             <ul className="mt-8 flex flex-wrap gap-2 text-sm font-semibold text-shadow-none">
               {['🗺️ Real places', '🌦️ Live weather', '💸 Budgets that add up', '🤖 Powered by Gemma'].map((t) => (
