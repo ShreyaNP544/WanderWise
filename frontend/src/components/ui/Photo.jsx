@@ -2,8 +2,10 @@ import { cn } from '../../lib/cn.js';
 
 /** Photo with a small, unobtrusive attribution link (licences require credit). */
 export function Photo({ photo, className, imgClassName, priority = false, showCredit = true, children }) {
+  // Only default to `relative` when the caller hasn't positioned it (e.g. an absolute background).
+  const positioned = /\b(absolute|fixed|sticky)\b/.test(className || '');
   return (
-    <figure className={cn('relative overflow-hidden', className)}>
+    <figure className={cn(!positioned && 'relative', 'm-0 overflow-hidden', className)}>
       <img
         src={photo.src}
         alt={photo.alt}
