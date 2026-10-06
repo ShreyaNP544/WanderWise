@@ -34,7 +34,8 @@ export const PLAN_RULES = `## Planning rules
 - Pace: relaxed = at most 2 main activities per day with long breaks; moderate = 2–3; packed = 3–4.
 - energy per activity: 1 easy, 2 moderate, 3 strenuous. With parents, elderly or small kids, avoid energy 3.
 - Order activities sensibly in time ("HH:MM", 24h) and geography.
-- Every activity's "why" names the traveller preference it serves, in under 20 words.
+- Every activity's "why" names the traveller preference it serves, in under 12 words.
+- Be concise everywhere (speed matters): "summary" is one sentence; "whyItWorks", "assumptions", "checkBefore" and "tradeoffNotes" have at most 3 short items each; omit "place" detail beyond a short name.
 - Activity ids are "d{day}a{n}", e.g. "d2a1".`;
 
 export const PLAN_JSON_SHAPE = `{
