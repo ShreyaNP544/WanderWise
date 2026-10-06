@@ -27,7 +27,9 @@ ${currentTotal ? `- Current plan total: ${inr(currentTotal)}` : ''}`,
       "patch": { "budget": 0, "days": 0, "travellers": 0, "stay": "budget|mid|premium", "transport": "train|bus|flight|any", "pace": "relaxed|moderate|packed" } }
   ]
 }
-In "patch" include ONLY the fields this option changes. estimateTotal must be realistic given the computed numbers.`,
+In "patch" include ONLY the fields this option changes. estimateTotal must be realistic given the computed numbers.
+The cheapest realistic total is a bare minimum with no comfort margin: any option that raises the budget should raise it to at least 15% above it.
+Write amounts in "message" and "tradeoff" with the ₹ symbol and Indian digit grouping (₹29,600).`,
     JSON_ONLY,
   ]
     .filter(Boolean)

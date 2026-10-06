@@ -12,8 +12,9 @@ export const STRATEGIES = {
 - In change.summary say roughly how much was saved and where.`,
 
   fatigue: () => `### Strategy: reduce travel fatigue
-- On the days in scope: fewer activities, no two energy-3 items back to back, longer gaps, a rest or café block, and start later after early mornings or overnight travel.
-- Keep the experiences the traveller cares most about; drop or shorten the filler.`,
+- Each day in scope MUST end up noticeably lighter: remove or shorten at least one activity, no energy-3 activities, total activity time under 5 hours, and add a rest or café block.
+- Start later after early mornings or overnight travel.
+- Keep the experiences the traveller cares most about; drop or shorten the filler (it can move to another day only if that day is in scope).`,
 
   family: () => `### Strategy: family-friendly adaptation
 - Group composition changed (see traveller brief). Re-plan for everyone's comfort: max energy 2, no steep treks or late nights, comfortable transport and stays with easy access, rest blocks after lunch.

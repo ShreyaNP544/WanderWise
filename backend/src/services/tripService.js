@@ -46,8 +46,22 @@ async function enforceBudget({ plan, prefs, dest, grounding, history, keep = [] 
 
 function overBudgetWarning(budget, feasibility) {
   if (budget.status === 'within') return [];
-  const floor = feasibility?.known ? ` The cheapest realistic version costs about ${inr(feasibility.floor)}.` : '';
+  const floor = feasibility?.known && feasibility.floor > budget.cap ? ` The cheapest realistic version costs about ${inr(feasibility.floor)}.` : '';
   return [`This plan is ${inr(budget.total - budget.cap)} over your ${inr(budget.cap)} budget.${floor}`];
+}
+
+const EMPTY_WARNING = /^(none|n\/a|no warnings?|nothing)\b/i;
+const cleanWarnings = (list = []) => list.filter((w) => w && !EMPTY_WARNING.test(w.trim()));
+
+/** Code referees Gemma's options: a raised budget must clear the bare-minimum floor with a margin. */
+function normalizeOptions(options, floor) {
+  const minBudget = Math.ceil((floor * 1.15) / 500) * 500;
+  return options.map((o) => {
+    if (o.patch.budget && o.patch.budget < minBudget) {
+      return { ...o, patch: { ...o.patch, budget: minBudget }, estimateTotal: Math.max(o.estimateTotal, Math.round(floor * 1.05)) };
+    }
+    return o;
+  });
 }
 
 function makeVersion({ prefs, plan, budget, change = null, diff = null, warnings = [], ai: aiMeta, instruction = null }) {
@@ -153,7 +167,13 @@ async function runModification(id, { instruction, optionId }) {
     const { conflict, meta } = await ai.proposeTradeoffs({
       prefs: nextPrefs, request: instruction, feasibility, grounding, currentTotal: current.budget.total,
     });
-    trip.pendingConflict = { ...conflict, request: instruction, floor: feasibility.floor, ai: meta };
+    trip.pendingConflict = {
+      ...conflict,
+      options: normalizeOptions(conflict.options, feasibility.floor),
+      request: instruction,
+      floor: feasibility.floor,
+      ai: meta,
+    };
     trip.history.push({ instruction, at: new Date().toISOString(), outcome: 'conflict' });
     await store.save(trip);
     return { kind: 'conflict', trip: serializeTrip(trip) };
@@ -180,6 +200,7 @@ async function runModification(id, { instruction, optionId }) {
   const enforced = await enforceBudget({ plan: finalize(scoped.plan, dest), prefs: nextPrefs, dest, grounding, history, keep });
 
   const diff = diffPlans(current.plan, enforced.plan);
+  edited.change.warnings = cleanWarnings(edited.change.warnings);
   const warnings = [
     ...edited.change.warnings,
     ...overBudgetWarning(enforced.budget, feasibility),
