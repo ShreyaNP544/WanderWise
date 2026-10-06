@@ -1,6 +1,7 @@
 import { CloudRain, CloudSun, Gem, MapPinned, Snowflake, Sun } from 'lucide-react';
 import { Card } from '../ui/Card.jsx';
 import { Photo } from '../ui/Photo.jsx';
+import { usePlacePhoto } from '../../hooks/usePlacePhoto.js';
 import { SourceBadge } from './SourceBadge.jsx';
 import { cn } from '../../lib/cn.js';
 import { formatINR } from '../../lib/format.js';
@@ -92,14 +93,22 @@ function ActivityItem({ activity, mark, destination, index }) {
 
 export function DayCard({ day, date, weather, marks, destination, theme }) {
   const changed = day.activities.some((a) => marks[a.id]);
+  // The day's headline landmark, only if code matched it to a real place (never a guess from free text).
+  const landmark = day.type !== 'travel' && day.activities.find((a) => a.placeName || a.baselineName);
+  const landmarkName = landmark ? landmark.placeName || landmark.baselineName : '';
+  const landmarkPhoto = usePlacePhoto(landmarkName);
+  const bannerPhoto = landmarkPhoto || theme?.photo;
   return (
     <Card as="section" className={cn('overflow-hidden', changed && 'animate-remix-glow ring-2 ring-sunset-500/30')} aria-labelledby={`day-${day.day}`}>
       {theme && (
-        <Photo photo={theme.photo} className="h-32 sm:h-40" imgClassName="transition-transform duration-700 hover:scale-105">
+        <Photo key={bannerPhoto?.src || 'none'} photo={bannerPhoto} className="h-32 sm:h-40" imgClassName="transition-transform duration-700 hover:scale-105">
           <div className="absolute inset-0 bg-linear-to-t from-black/45 via-transparent to-transparent" aria-hidden="true" />
           <span className="absolute left-4 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-ink shadow-sm sm:left-6">
             {theme.emoji} {theme.label}
           </span>
+          {landmarkPhoto && (
+            <span className="absolute bottom-2 left-4 text-sm font-semibold text-white drop-shadow sm:left-6">{landmarkName}</span>
+          )}
         </Photo>
       )}
       <div className="p-4 sm:p-6">

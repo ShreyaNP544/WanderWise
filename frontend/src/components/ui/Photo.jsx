@@ -4,6 +4,15 @@ import { cn } from '../../lib/cn.js';
 export function Photo({ photo, className, imgClassName, priority = false, showCredit = true, children }) {
   // Only default to `relative` when the caller hasn't positioned it (e.g. an absolute background).
   const positioned = /\b(absolute|fixed|sticky)\b/.test(className || '');
+  // No real photo of this place: show a neutral branded panel rather than a misleading landscape.
+  if (!photo) {
+    return (
+      <div className={cn(!positioned && 'relative', 'overflow-hidden bg-linear-to-br from-brand-700 via-brand-900 to-ink', className)} aria-hidden={!children || undefined}>
+        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_20%_20%,white_1px,transparent_1px)] bg-size-[22px_22px]" aria-hidden="true" />
+        {children}
+      </div>
+    );
+  }
   return (
     <figure className={cn(!positioned && 'relative', 'm-0 overflow-hidden', className)}>
       <img

@@ -14,6 +14,7 @@ import { RemixPanel } from '../components/trip/RemixPanel.jsx';
 import { ReshapeBar } from '../components/trip/ReshapeBar.jsx';
 import { TripHeader } from '../components/trip/TripHeader.jsx';
 import { TripSkeleton } from '../components/trip/TripSkeleton.jsx';
+import { usePlacePhoto } from '../hooks/usePlacePhoto.js';
 import { useTrip } from '../hooks/useTrip.js';
 import { dayTheme } from '../lib/destinations.js';
 import { forgetTrip } from '../lib/recentTrips.js';
@@ -23,6 +24,7 @@ export default function Trip() {
   const { id } = useParams();
   const t = useTrip(id);
   const { trip } = t;
+  const livePhoto = usePlacePhoto(trip && !trip.context?.photo ? trip.preferences.destination : '');
   const marks = useMemo(() => (t.showChange ? changeMarks(trip?.version.diff) : {}), [t.showChange, trip]);
 
   if (t.loadError) {
@@ -45,7 +47,7 @@ export default function Trip() {
 
   return (
     <>
-      <TripHeader trip={trip} />
+      <TripHeader trip={trip} livePhoto={livePhoto} />
 
       <div className="mx-auto grid max-w-6xl items-start gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_340px]">
         <div className="grid min-w-0 gap-5">
@@ -67,7 +69,7 @@ export default function Trip() {
               weather={weatherByDay[day.day]}
               marks={marks}
               destination={trip.destination.name}
-              theme={dayTheme(day, p.destination, context?.photo)}
+              theme={dayTheme(day, p.destination, context?.photo || livePhoto)}
             />
           ))}
         </div>

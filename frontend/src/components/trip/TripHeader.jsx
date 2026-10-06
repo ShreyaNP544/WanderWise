@@ -13,12 +13,12 @@ function Chip({ Icon, children }) {
   );
 }
 
-export function TripHeader({ trip }) {
+export function TripHeader({ trip, livePhoto }) {
   const { preferences: p, version } = trip;
   const ai = version.ai;
   return (
     <header className="relative isolate overflow-hidden">
-      <Photo photo={photoFor(p.destination, trip.context?.photo)} priority className="absolute inset-0 -z-10">
+      <Photo photo={photoFor(p.destination, trip.context?.photo || livePhoto)} priority className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-linear-to-t from-brand-900/95 via-brand-900/55 to-brand-900/20" aria-hidden="true" />
       </Photo>
       <div className="mx-auto max-w-6xl px-4 pb-8 pt-20 text-white sm:px-6 sm:pt-28">

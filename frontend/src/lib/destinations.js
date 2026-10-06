@@ -8,8 +8,7 @@ const photo = (id, alt, credit, license, file) => ({ src: `/images/${id}.jpg`, a
 
 export const HERO_PHOTO = photo('hero', 'Snow-capped peaks above Kardang village in Lahaul, Himachal Pradesh', 'Timothy A. Gonsalves', 'CC BY-SA 4.0', 'Kardang West Lahaul Himachal Oct22 A7C 03376.jpg');
 
-// Neutral fallback while a place photo loads or when none exists.
-export const FALLBACK_PHOTO = HERO_PHOTO;
+// No photo of the place → null, and <Photo> renders a neutral branded panel (never a misleading landscape).
 
 export const DESTINATIONS = [
   {
@@ -109,8 +108,8 @@ export function matchDestination(text = '') {
   return DESTINATIONS.find((d) => d.aliases.some((a) => t.includes(` ${a} `))) || null;
 }
 
-/** Hand-picked photo for curated places, else the live place photo, else a neutral fallback. */
-export const photoFor = (text, livePhoto) => matchDestination(text)?.photo || livePhoto || FALLBACK_PHOTO;
+/** Hand-picked photo for curated places, else the live place photo, else null. */
+export const photoFor = (text, livePhoto) => matchDestination(text)?.photo || livePhoto || null;
 
 /**
  * Banner for a day, from its activities. Food, temple and adventure days get themed photos;
