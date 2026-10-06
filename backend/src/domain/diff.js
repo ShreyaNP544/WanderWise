@@ -43,5 +43,9 @@ export function diffPlans(prev, next) {
     stay: stayBefore !== stayAfter ? { before: stayBefore, after: stayAfter } : null,
     transport: transportBefore !== transportAfter ? { before: transportBefore, after: transportAfter } : null,
     food: prev.foodPerPersonPerDay !== next.foodPerPersonPerDay ? { before: prev.foodPerPersonPerDay, after: next.foodPerPersonPerDay } : null,
+    localTransport:
+      prev.localTransportPerPersonPerDay !== next.localTransportPerPersonPerDay
+        ? { before: prev.localTransportPerPersonPerDay, after: next.localTransportPerPersonPerDay }
+        : null,
   };
 }

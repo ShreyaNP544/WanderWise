@@ -29,6 +29,7 @@ export function ChangePanel({ version, onClose }) {
     ...(diff.stay ? [`Stay: ${diff.stay.after}`] : []),
     ...(diff.transport ? [`Transport: ${diff.transport.after}`] : []),
     ...(diff.food ? [`Food budget: ${formatINR(diff.food.before)} → ${formatINR(diff.food.after)} per person/day`] : []),
+    ...(diff.localTransport ? [`Local transport: ${formatINR(diff.localTransport.before)} → ${formatINR(diff.localTransport.after)} per person/day`] : []),
   ];
 
   return (

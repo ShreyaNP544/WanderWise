@@ -41,6 +41,11 @@ export function parseInstruction(text, prefs, currentTotal) {
   const amounts = [...t.matchAll(/(?:₹|rs\.?|inr)\s*([\d,]+(?:\.\d+)?)\s*(k|thousand|lakhs?|l)?\b|([\d,]+(?:\.\d+)?)\s*(k|thousand|lakhs?)\b/gi)]
     .map((m) => (m[1] ? parseAmount(m[1], m[2]) : parseAmount(m[3], m[4])))
     .filter((n) => n >= 1000 && n <= 1_000_000);
+  // Bare numbers count when budget words introduce them ("under 16,000", "budget to 15000")
+  const bare = [...t.matchAll(/\b(?:under|below|within|budget(?:\s+(?:of|to|is))?|cap(?:\s+(?:it\s+)?at)?|max(?:imum)?|to)\s+(?:about\s+|around\s+)?([\d]{1,2},\d{2},\d{3}|[\d]{1,3},\d{3}|\d{4,7})\b/gi)]
+    .map((m) => parseAmount(m[1]))
+    .filter((n) => n >= 1000 && n <= 1_000_000);
+  amounts.push(...bare);
   const pct = t.match(/\b(?:by|cut|reduce|lower)\D{0,12}(\d{1,2})\s?%/i);
   if (amounts.length) patch.budget = amounts.at(-1);
   else if (pct) patch.budget = Math.round((prefs.budget * (100 - Number(pct[1]))) / 100);
@@ -80,6 +85,13 @@ export function parseInstruction(text, prefs, currentTotal) {
     .map(([name]) => name);
   if (patch.budget && !strategies.includes('budget')) strategies.push('budget');
   if (patch.travellerType && !strategies.includes('family')) strategies.push('family');
+
+  // "Cut it to 3 days" is about days, not money, unless money is actually mentioned.
+  const mentionsMoney = /₹|\brs\b|\binr\b|budget|cost|cheap|expensive|save|saving|afford|price|spend|\d\s?k\b/i.test(t);
+  if (!mentionsMoney && !patch.budget && (patch.days || patch.travellers)) {
+    const i = strategies.indexOf('budget');
+    if (i >= 0) strategies.splice(i, 1);
+  }
 
   // "cheaper" with no number → aim ~15% under the current total
   if (strategies.includes('budget') && !patch.budget && /\b(cheap|cheaper|expensive|save|reduce|lower|cut)\b/i.test(t) && currentTotal) {

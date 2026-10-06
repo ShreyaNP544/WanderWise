@@ -44,20 +44,25 @@ export function groundingFor(dest, prefs) {
   };
 }
 
-const STOP = new Set(['the', 'and', 'of', 'ki', 'ka', 'walk', 'trip', 'day', 'visit', 'tour', 'to', 'at', 'in']);
-const tokens = (s) => norm(s).split(' ').filter((w) => w.length > 2 && !STOP.has(w));
+const STOP = new Set(['the', 'and', 'of', 'ki', 'ka', 'walk', 'trip', 'day', 'visit', 'tour', 'to', 'at', 'in', 'near', 'from', 'with']);
+const stem = (w) => (w.length > 4 && w.endsWith('s') ? w.slice(0, -1) : w);
+const tokens = (s, ignore) => norm(s).split(' ').map(stem).filter((w) => w.length > 2 && !STOP.has(w) && !ignore?.has(w));
 
-/** Match a planned activity to a dataset attraction (for provenance). */
-export function matchAttraction(dest, activity) {
+/**
+ * Match a planned activity to a known attraction (for provenance).
+ * The destination's own name never counts ("Manali" alone must not match "Manali Sanctuary").
+ */
+export function matchAttraction(dest, activity, destinationName = '') {
   if (!dest) return null;
-  const hay = new Set(tokens(`${activity.title} ${activity.place}`));
+  const ignore = new Set(tokens(`${destinationName} ${dest.name || ''} ${(dest.aliases || []).join(' ')}`));
+  const hay = new Set(tokens(`${activity.title} ${activity.place}`, ignore));
   let best = null;
   for (const a of dest.attractions) {
-    const words = tokens(a.name);
+    const words = tokens(a.name, ignore);
     if (!words.length) continue;
     const hits = words.filter((w) => hay.has(w)).length;
     const score = hits / words.length;
-    if (score >= 0.5 && (!best || score > best.score)) best = { attraction: a, score };
+    if (hits > 0 && score >= 0.5 && (!best || score > best.score)) best = { attraction: a, score };
   }
   return best?.attraction || null;
 }

@@ -2,7 +2,7 @@
 // Run: node scripts/check-domain.js
 import assert from 'node:assert/strict';
 import { extractJson } from '../src/ai/json.js';
-import { findDestination } from '../src/domain/destinations.js';
+import { findDestination, matchAttraction } from '../src/domain/destinations.js';
 import { assessFeasibility } from '../src/domain/feasibility.js';
 import { parseInstruction } from '../src/domain/instruction.js';
 
@@ -38,6 +38,11 @@ const cases = [
   ['Replace the expensive activities', (r) => assert.ok(r.strategies.includes('replace') && r.strategies.includes('budget'))],
   ['Cut it to 3 days', (r) => assert.equal(r.patch.days, 3)],
   ['make it vegetarian', (r) => assert.equal(r.patch.diet, 'vegetarian')],
+  ['Bring it under 16,000 but keep the photography spots', (r) => {
+    assert.equal(r.patch.budget, 16000);
+    assert.ok(r.keepInterests.includes('Photography'));
+  }],
+  ['Cut it to 3 days', (r) => assert.equal(r.patch.budget, undefined)],
 ];
 
 for (const [text, check] of cases) {
@@ -52,6 +57,15 @@ const f = assessFeasibility({ ...prefs, travellers: 4, budget: 15000 }, findDest
 assert.equal(f.feasible, false);
 console.log('✓ feasibility: 4 people, ₹15,000 → floor', f.floor, 'shortfall', f.shortfall);
 console.log('✓ feasibility: 2 people, ₹20,000 → floor', assessFeasibility(prefs, findDestination('Manali')).floor);
+
+// Provenance must not match on the destination's own name
+const manali = findDestination('Manali');
+const places = { attractions: [{ name: 'Manali Sanctuary' }, { name: 'Hidimba Devi Temple' }] };
+assert.equal(matchAttraction(places, { title: 'Check-in and Rest', place: 'Manali' }, 'Manali'), null);
+assert.equal(matchAttraction(places, { title: 'Hadimba Devi Temple Walk', place: 'Manali' }, 'Manali')?.name, 'Hidimba Devi Temple'); // alternate spelling still matches
+assert.equal(matchAttraction(places, { title: 'Hidimba Devi Temple', place: 'Old Manali' }, 'Manali')?.name, 'Hidimba Devi Temple');
+assert.equal(matchAttraction(manali, { title: 'Old Manali Café Hopping', place: 'Old Manali' })?.name, 'Old Manali village walk & cafés');
+console.log('✓ provenance matching');
 
 assert.deepEqual(extractJson('Sure! ```json\n{"a":1,}\n```'), { a: 1 });
 assert.deepEqual(extractJson('schema {"x":string} then answer {"a":{"b":[1,2]}} done'), { a: { b: [1, 2] } });

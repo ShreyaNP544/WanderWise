@@ -32,7 +32,7 @@ export function deriveDayEnergy(plan) {
  * "real_place" = matches a real place from Wikipedia near the destination (place exists; cost is an estimate);
  * otherwise "ai_estimate".
  */
-export function annotateProvenance(plan, dest, places = []) {
+export function annotateProvenance(plan, dest, places = [], destinationName = '') {
   const placeDest = { attractions: places.map((p) => ({ name: p.name, url: p.url })) };
   for (const day of plan.days) {
     for (const a of day.activities) {
@@ -42,7 +42,7 @@ export function annotateProvenance(plan, dest, places = []) {
         continue;
       }
       const curated = matchAttraction(dest, a);
-      const real = places.length ? matchAttraction(placeDest, a) : null;
+      const real = places.length ? matchAttraction(placeDest, a, dest?.name || destinationName) : null;
       if (real) {
         a.placeName = real.name;
         a.placeUrl = real.url;
