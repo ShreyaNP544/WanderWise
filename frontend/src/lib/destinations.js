@@ -1,64 +1,54 @@
-// Destination photos (Wikimedia Commons, credited) + light matching for the UI.
-// Data ids mirror backend/src/data/destinations.json.
+// Destination photos (Wikimedia Commons Featured/Quality images, credited) + light matching for the UI.
+// Data ids mirror backend/src/data/destinations.json. Full credits: public/images/CREDITS.md.
 
 const commons = (file) => `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(file)}`;
 
-export const HERO_PHOTO = {
-  src: '/images/hero.jpg',
-  alt: 'The Bhaga river winding through a high Himalayan valley in Lahaul',
-  credit: 'Timothy A. Gonsalves',
-  license: 'CC BY-SA 4.0',
-  source: commons('Bhaga River Darcha Gemur Lahaul Jun24 A7CR 00231.jpg'),
-};
+const photo = (id, alt, credit, license, file) => ({ src: `/images/${id}.jpg`, alt, credit, license, source: commons(file) });
 
-export const FALLBACK_PHOTO = {
-  src: '/images/generic.jpg',
-  alt: 'Houseboats on the Kerala backwaters',
-  credit: 'Vyacheslav Argenberg',
-  license: 'CC BY 4.0',
-  source: commons('Kerala backwaters, Houseboats, India.jpg'),
-};
+export const HERO_PHOTO = photo('hero', 'Snow-capped peaks above Kardang village in Lahaul, Himachal Pradesh', 'Timothy A. Gonsalves', 'CC BY-SA 4.0', 'Kardang West Lahaul Himachal Oct22 A7C 03376.jpg');
+
+export const FALLBACK_PHOTO = photo('generic', 'A boatman with a violet umbrella on the Kerala backwaters', 'Hans A. Rosbach', 'CC BY-SA 3.0', 'Kerala backwater 20080218-11.jpg');
 
 export const DESTINATIONS = [
   {
     id: 'manali', name: 'Manali', region: 'Himachal Pradesh', blurb: 'Snow peaks, pine valleys, café villages',
     aliases: ['manali', 'himachal', 'kullu', 'solang'],
-    photo: { src: '/images/manali.jpg', alt: 'Solang valley below snowy peaks near Manali', credit: 'Shubhanshu', license: 'Public domain', source: commons('A view of solang valley on the way to rohtang pass.jpg') },
+    photo: photo('manali', 'Snow on the Rohtang range above the pine forests of Manali', 'Timothy A. Gonsalves', 'CC BY-SA 4.0', 'Snow Rohtang Range Manali May24 A7CR 00128.jpg'),
   },
   {
     id: 'goa', name: 'Goa', region: 'Goa', blurb: 'Beaches, Goan food, Portuguese lanes',
-    aliases: ['goa', 'palolem', 'calangute', 'panaji'],
-    photo: { src: '/images/goa.jpg', alt: 'Palm-fringed crescent of Palolem beach, South Goa', credit: 'iMahesh', license: 'CC BY-SA 4.0', source: commons('Palolem Beach, South Goa.jpg') },
+    aliases: ['goa', 'palolem', 'calangute', 'panaji', 'mandrem'],
+    photo: photo('goa', 'Mandrem beach and river in North Goa', 'Vyacheslav Argenberg', 'CC BY 4.0', 'Mandrem Beach and Mandrem River, Mandrem, Goa, India (edit).jpg'),
   },
   {
     id: 'jaipur', name: 'Jaipur', region: 'Rajasthan', blurb: 'Forts, bazaars and the Pink City',
     aliases: ['jaipur', 'pink city'],
-    photo: { src: '/images/jaipur.jpg', alt: 'The pink sandstone facade of Hawa Mahal in Jaipur', credit: 'Chainwit.', license: 'CC BY-SA 4.0', source: commons('East facade Hawa Mahal Jaipur from ground level (July 2022) - img 01.jpg') },
+    photo: photo('jaipur', 'Jal Mahal water palace glowing at dusk, Jaipur', 'A.Savin', 'FAL', 'Jaipur 03-2016 39 Jal Mahal - Water Palace.jpg'),
   },
   {
     id: 'rishikesh', name: 'Rishikesh', region: 'Uttarakhand', blurb: 'Ganga ghats, rafting and yoga',
     aliases: ['rishikesh', 'haridwar'],
-    photo: { src: '/images/rishikesh.jpg', alt: 'Lakshman Jhula suspension bridge over the Ganga in Rishikesh', credit: 'McKay Savage', license: 'CC BY 2.0', source: commons('Rishikesh, Lakshman Jhula.jpg') },
+    photo: photo('rishikesh', 'Suspension bridge over the turquoise Ganga in Rishikesh', 'Snehrashmi', 'CC BY-SA 4.0', 'Lakshman Jhula Bridge - Hrishikesh - Uttarakhand 001.jpg'),
   },
   {
     id: 'udaipur', name: 'Udaipur', region: 'Rajasthan', blurb: 'Lake palaces and golden sunsets',
     aliases: ['udaipur'],
-    photo: { src: '/images/udaipur.jpg', alt: 'Lake Pichola glowing at sunset in Udaipur', credit: 'UnpetitproleX', license: 'CC BY-SA 4.0', source: commons('Lake Pichola at sunset, Udaipur, Rajasthan, India.jpg') },
+    photo: photo('udaipur', 'The City Palace rising above Lake Pichola, Udaipur', 'Jakub Hałun', 'CC BY-SA 4.0', '20191207 Lake Pichola, City Palace, Udaipur, 1516 7254.jpg'),
   },
   {
     id: 'munnar', name: 'Munnar', region: 'Kerala', blurb: 'Rolling tea hills and misty mornings',
     aliases: ['munnar', 'idukki'],
-    photo: { src: '/images/munnar.jpg', alt: 'Tea plantations covering the hills of Munnar', credit: 'Ingo Mehling', license: 'CC BY-SA 4.0', source: commons('Munnar - Tea Plantations.jpg') },
+    photo: photo('munnar', 'Rolling tea hills under a blue sky near Munnar', 'Rainer Halama', 'CC BY-SA 4.0', 'Eravikulam National Park-WUS07189.jpg'),
   },
   {
     id: 'varanasi', name: 'Varanasi', region: 'Uttar Pradesh', blurb: 'Ancient ghats and river sunrises',
     aliases: ['varanasi', 'banaras', 'benares', 'kashi'],
-    photo: { src: '/images/varanasi.jpg', alt: 'Wooden boats on the Ganges at sunrise in Varanasi', credit: 'Schwiki', license: 'CC BY-SA 4.0', source: commons('Boats at sunrise Ganges River Varanasi Uttar Pradesh Schwiki.jpg') },
+    photo: photo('varanasi', 'Boats moored below Munshi Ghat, Varanasi', 'Marcin Białek', 'CC BY-SA 3.0', 'Varanasi Munshi Ghat3.jpg'),
   },
   {
     id: 'darjeeling', name: 'Darjeeling', region: 'West Bengal', blurb: 'Tea, toy trains and Kanchenjunga',
     aliases: ['darjeeling'],
-    photo: { src: '/images/darjeeling.jpg', alt: 'Kanchenjunga rising above the rooftops of Darjeeling', credit: 'DaLoetz', license: 'CC BY 4.0', source: commons('Kanchenjunga above roofs of Darjeeling 1.jpg') },
+    photo: photo('darjeeling', 'Tea plantations on the hills of Darjeeling', 'Vyacheslav Argenberg', 'CC BY 4.0', 'Darjeeling, India, Tea plantations on hills.jpg'),
   },
 ];
 
