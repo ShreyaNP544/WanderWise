@@ -1,4 +1,7 @@
+const isProd = process.env.NODE_ENV === 'production';
+
 export const config = {
+  isProd,
   port: Number(process.env.PORT) || 5000,
   clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
   gemini: {
@@ -12,3 +15,14 @@ export const config = {
   },
   mongoUri: process.env.MONGODB_URI || '',
 };
+
+export function configWarnings() {
+  const warnings = [];
+  if (!config.gemini.apiKey) {
+    warnings.push('GEMINI_API_KEY is not set: hosted Gemma is disabled (local Ollama / demo trip only).');
+  }
+  if (!config.mongoUri) {
+    warnings.push('MONGODB_URI is not set: trips are stored in memory and lost on restart.');
+  }
+  return warnings;
+}

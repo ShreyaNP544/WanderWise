@@ -1,22 +1,19 @@
-import { useEffect, useState } from 'react';
+import { Route, Routes } from 'react-router';
+import { AppShell } from './components/layout/AppShell.jsx';
+import Landing from './pages/Landing.jsx';
+import PlanTrip from './pages/PlanTrip.jsx';
+import Trip from './pages/Trip.jsx';
+import NotFound from './pages/NotFound.jsx';
 
 export default function App() {
-  const [health, setHealth] = useState(null);
-
-  useEffect(() => {
-    fetch('/api/health')
-      .then((r) => r.json())
-      .then(setHealth)
-      .catch(() => setHealth({ ok: false }));
-  }, []);
-
   return (
-    <main className="landing">
-      <h1>WanderWise</h1>
-      <p className="tagline">Your AI travel architect.</p>
-      <p className="status">
-        {health === null ? 'Connecting…' : health.ok ? 'API online · powered by Gemma' : 'API offline'}
-      </p>
-    </main>
+    <Routes>
+      <Route element={<AppShell />}>
+        <Route index element={<Landing />} />
+        <Route path="plan" element={<PlanTrip />} />
+        <Route path="trip/:id" element={<Trip />} />
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    </Routes>
   );
 }
