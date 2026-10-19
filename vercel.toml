@@ -1,0 +1,24 @@
+"$schema" = "https://openapi.vercel.sh/vercel.json"
+
+# 1. React/Vite frontend service
+[services.frontend]
+root = "frontend"
+framework = "vite"
+
+# 2. Node/Express backend service
+[services.backend]
+root = "backend"
+framework = "express"
+# src/app.js exports a factory, not the app; point Vercel at the file that default-exports it.
+entrypoint = "src/index.js"
+
+# 3. Route incoming traffic
+# Requests starting with /api/ go to the Express app
+[[rewrites]]
+source = "/api/(.*)"
+destination = { service = "backend" }
+
+# Everything else goes to the Vite frontend (also fixes SPA deep-link refreshes)
+[[rewrites]]
+source = "/(.*)"
+destination = { service = "frontend" }

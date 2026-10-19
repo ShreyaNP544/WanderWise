@@ -6,6 +6,13 @@ for (const warning of configWarnings()) console.warn(`⚠ ${warning}`);
 
 await initStore(config.mongoUri);
 
-createApp().listen(config.port, () => {
-  console.log(`WanderWise API on http://localhost:${config.port}`);
-});
+const app = createApp();
+
+// On Vercel the platform runs the exported app as a function; everywhere else we listen normally.
+if (!process.env.VERCEL) {
+  app.listen(config.port, () => {
+    console.log(`WanderWise API on http://localhost:${config.port}`);
+  });
+}
+
+export default app;

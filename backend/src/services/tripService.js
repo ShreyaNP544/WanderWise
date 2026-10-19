@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+// Static JSON import so serverless bundlers (Vercel) include the file.
+import demoTemplate from '../data/demo-trip.json' with { type: 'json' };
 import * as ai from '../ai/index.js';
 import { inr } from '../ai/prompts/shared.js';
 import { buildContext, contextForPrompt } from '../grounding/index.js';
@@ -318,17 +319,10 @@ async function runModification(id, { instruction, optionId }) {
 
 // ─────────────────────────────── Demo trip ───────────────────────────────
 
-const DEMO_FILE = new URL('../data/demo-trip.json', import.meta.url);
-
 /** A pre-generated showcase trip: opens instantly and never depends on Gemma being up. */
 export async function createDemoTrip() {
-  let template;
-  try {
-    template = JSON.parse(await readFile(DEMO_FILE, 'utf8'));
-  } catch {
-    throw new AppError(404, 'NOT_FOUND', 'The demo trip is not available yet.');
-  }
-  const trip = { ...structuredClone(template), id: newId(), createdAt: new Date().toISOString() };
+  if (!demoTemplate?.versions) throw new AppError(404, 'NOT_FOUND', 'The demo trip is not available yet.');
+  const trip = { ...structuredClone(demoTemplate), id: newId(), createdAt: new Date().toISOString() };
   await getStore().save(trip);
   return serializeTrip(trip);
 }

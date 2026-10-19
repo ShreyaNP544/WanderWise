@@ -1,6 +1,5 @@
-import { readFileSync } from 'node:fs';
-
-const dataset = JSON.parse(readFileSync(new URL('../data/destinations.json', import.meta.url), 'utf8'));
+// Static JSON import so serverless bundlers (Vercel) include the file.
+import dataset from '../data/destinations.json' with { type: 'json' };
 
 const ORIGIN_ALIASES = {
   mumbai: ['mumbai', 'bombay', 'thane', 'navi mumbai'],
